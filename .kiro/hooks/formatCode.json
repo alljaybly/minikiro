@@ -1,0 +1,48 @@
+{
+  "name": "Format Code Hook",
+  "description": "Auto-formats generated code when the Format button is clicked",
+  "trigger": {
+    "type": "manual",
+    "event": "format_button_click"
+  },
+  "actions": [
+    {
+      "type": "format_code",
+      "description": "Apply basic formatting rules to the generated code",
+      "rules": {
+        "javascript": [
+          "Add proper spacing around operators",
+          "Ensure semicolons are present",
+          "Fix indentation",
+          "Normalize variable declarations"
+        ],
+        "python": [
+          "Fix indentation to 4 spaces",
+          "Normalize function definitions",
+          "Ensure proper spacing"
+        ],
+        "html": [
+          "Format tag structure",
+          "Remove extra whitespace",
+          "Ensure proper nesting"
+        ]
+      }
+    },
+    {
+      "type": "log_action",
+      "description": "Log the formatting action to debug log",
+      "target": ".kiro/debug.log"
+    }
+  ],
+  "settings": {
+    "enabled": true,
+    "auto_save": false,
+    "show_notifications": true
+  },
+  "metadata": {
+    "created": "2025-08-13",
+    "version": "1.0.0",
+    "author": "MiniKiro",
+    "category": "code_formatting"
+  }
+}

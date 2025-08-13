@@ -1,0 +1,57 @@
+{
+  "name": "Git Command Logging Hook",
+  "description": "Intercepts Git commands to prevent terminal hangs and log execution",
+  "trigger": {
+    "type": "command",
+    "event": "git_command_execution",
+    "patterns": [
+      "git log",
+      "git status",
+      "git diff",
+      "git branch",
+      "git remote",
+      "git show",
+      "git reflog"
+    ]
+  },
+  "actions": [
+    {
+      "type": "intercept_command",
+      "description": "Redirect Git command to PowerShell script to avoid terminal hang",
+      "redirect_to": ".kiro/scripts/git_fallback.ps1",
+      "timeout": 30000
+    },
+    {
+      "type": "log_execution",
+      "description": "Log Git command execution details",
+      "target": ".kiro/debug.log",
+      "format": "json",
+      "include": [
+        "timestamp",
+        "command",
+        "output",
+        "exit_code",
+        "execution_time"
+      ]
+    },
+    {
+      "type": "display_output",
+      "description": "Show command output in Kiro terminal",
+      "format": "formatted"
+    }
+  ],
+  "settings": {
+    "enabled": true,
+    "prevent_hang": true,
+    "max_execution_time": "30s",
+    "fallback_to_powershell": true,
+    "log_level": "verbose"
+  },
+  "metadata": {
+    "created": "2025-08-13",
+    "version": "1.0.0",
+    "author": "MiniKiro",
+    "category": "git_integration",
+    "issue": "Kiro terminal hangs on git log commands"
+  }
+}

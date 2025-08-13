@@ -159,6 +159,31 @@ netlify dev
 - **Timeout**: 2-minute maximum execution time with auto-kill
 - **Exit Test**: Added Jest exit verification test
 
+## Git Command Integration Fix
+
+### Issue Resolution
+- **Problem**: Kiro terminal hangs on `git log --oneline -5` and other Git commands
+- **Root Cause**: VS Code terminal integration issues on Windows similar to Jest hang
+- **Solution**: Git command logging hook with PowerShell fallback script
+
+### Git Command Hook
+```json
+{
+  "name": "Git Command Logging Hook",
+  "trigger": { "type": "command", "event": "git_command_execution" },
+  "actions": [
+    { "type": "intercept_command", "redirect_to": ".kiro/scripts/git_fallback.ps1" },
+    { "type": "log_execution", "target": ".kiro/debug.log" }
+  ]
+}
+```
+
+### PowerShell Fallback
+- **Script**: `.kiro/scripts/git_fallback.ps1` handles Git commands
+- **Usage**: `powershell -ExecutionPolicy Bypass -File ".kiro/scripts/git_fallback.ps1" "status"`
+- **Logging**: All Git operations logged with timestamps and execution time
+- **Timeout**: 30-second maximum execution time with error handling
+
 ## Accessibility Features
 - **ARIA Labels**: All interactive elements properly labeled
 - **Keyboard Navigation**: Full keyboard accessibility

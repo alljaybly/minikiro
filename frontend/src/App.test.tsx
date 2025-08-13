@@ -153,4 +153,12 @@ describe('MiniKiro App', () => {
     // Log test completion
     console.log('Jest test suite completed successfully');
   });
+
+  test('Git command logging works', () => {
+    // Placeholder test to confirm Git hook execution
+    expect(true).toBe(true);
+    
+    // Log Git hook test
+    console.log('Git command logging hook test completed');
+  });
 });

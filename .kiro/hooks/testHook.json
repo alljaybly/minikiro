@@ -1,0 +1,47 @@
+{
+  "name": "Test Monitoring Hook",
+  "description": "Monitors npm test execution and logs performance metrics",
+  "trigger": {
+    "type": "command",
+    "event": "npm_test_execution",
+    "patterns": ["npm test", "npm run test"]
+  },
+  "actions": [
+    {
+      "type": "log_start",
+      "description": "Log test execution start time",
+      "target": ".kiro/debug.log",
+      "format": "timestamp_command_status"
+    },
+    {
+      "type": "monitor_process",
+      "description": "Monitor Jest process for hangs or timeouts",
+      "timeout": 120000,
+      "kill_on_timeout": true
+    },
+    {
+      "type": "log_completion",
+      "description": "Log test execution completion and metrics",
+      "target": ".kiro/debug.log",
+      "metrics": [
+        "duration",
+        "exit_code",
+        "test_count",
+        "pass_count",
+        "fail_count"
+      ]
+    }
+  ],
+  "settings": {
+    "enabled": true,
+    "auto_kill_hanging_tests": true,
+    "max_execution_time": "2m",
+    "log_level": "verbose"
+  },
+  "metadata": {
+    "created": "2025-08-13",
+    "version": "1.0.0",
+    "author": "MiniKiro",
+    "category": "test_monitoring"
+  }
+}

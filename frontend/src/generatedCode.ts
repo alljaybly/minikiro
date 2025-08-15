@@ -3,6 +3,7 @@ export interface CodeResponse {
   prompt: string;
   code: string;
   language: string;
+  points?: number;
 }
 
 export const mockVibeResponses: Record<string, CodeResponse> = {
@@ -143,7 +144,8 @@ export const realTimeCodeMap: Record<string, CodeResponse> = {
   <polygon points="50,10 20,90 95,35 5,35 80,90" fill="red" stroke="darkred" stroke-width="2"/>
   <text x="50" y="105" text-anchor="middle" fill="red" font-family="Arial" font-size="12">Red Star!</text>
 </svg>`,
-    language: "html"
+    language: "html",
+    points: 10
   },
   "make a cartoon button": {
     prompt: "make a cartoon button",
@@ -265,7 +267,8 @@ export const realTimeCodeMap: Record<string, CodeResponse> = {
        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Contact</a></li>
   </ul>
 </nav>`,
-    language: "html"
+    language: "html",
+    points: 50
   },
   "build a rest api client": {
     prompt: "build a rest api client",
@@ -325,7 +328,46 @@ export const realTimeCodeMap: Record<string, CodeResponse> = {
     <div style="color: #ff9800;">↘ -0.5% from target</div>
   </div>
 </div>`,
-    language: "html"
+    language: "html",
+    points: 75
+  },
+  "make a pixel art game": {
+    prompt: "make a pixel art game",
+    code: `<div style="text-align: center; padding: 20px; background: #000; color: #0f0;">
+  <h3 style="color: #0f0; font-family: monospace; margin-bottom: 20px;">🎮 Pixel Art Game</h3>
+  <canvas id="game" width="200" height="200" style="border: 2px solid #0f0; background: #111;"></canvas>
+  <div style="margin-top: 15px;">
+    <button onclick="movePlayer(-10, 0)" style="background: #0f0; color: #000; border: none; padding: 10px; margin: 5px; font-weight: bold;">←</button>
+    <button onclick="movePlayer(10, 0)" style="background: #0f0; color: #000; border: none; padding: 10px; margin: 5px; font-weight: bold;">→</button>
+    <button onclick="movePlayer(0, -10)" style="background: #0f0; color: #000; border: none; padding: 10px; margin: 5px; font-weight: bold;">↑</button>
+    <button onclick="movePlayer(0, 10)" style="background: #0f0; color: #000; border: none; padding: 10px; margin: 5px; font-weight: bold;">↓</button>
+  </div>
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    let playerX = 95, playerY = 95;
+    
+    function drawGame() {
+      ctx.clearRect(0, 0, 200, 200);
+      // Draw player (red pixel)
+      ctx.fillStyle = '#f00';
+      ctx.fillRect(playerX, playerY, 10, 10);
+      // Draw collectible (yellow pixel)
+      ctx.fillStyle = '#ff0';
+      ctx.fillRect(50, 50, 10, 10);
+    }
+    
+    function movePlayer(dx, dy) {
+      playerX = Math.max(0, Math.min(190, playerX + dx));
+      playerY = Math.max(0, Math.min(190, playerY + dy));
+      drawGame();
+    }
+    
+    drawGame();
+  </script>
+</div>`,
+    language: "html",
+    points: 100
   }
 };
 

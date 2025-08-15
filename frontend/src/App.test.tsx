@@ -239,4 +239,26 @@ describe('MiniKiro App', () => {
     expect(result.code).toContain('box-shadow');
     expect(result.language).toBe('html');
   });
+
+  test('Setup Guide link renders in App', () => {
+    render(<App />);
+    
+    const setupGuideLink = screen.getByLabelText(/open setup guide in new tab/i);
+    expect(setupGuideLink).toBeInTheDocument();
+    expect(setupGuideLink).toHaveAttribute('href', 'https://github.com/alljaybly/minikiro/blob/main/README.md');
+    expect(setupGuideLink).toHaveAttribute('target', '_blank');
+  });
+
+  test('Points system works in code generation', () => {
+    const { generateCode } = require('./generatedCode');
+    
+    const starResult = generateCode('draw a red star');
+    expect(starResult.points).toBe(10);
+    
+    const navbarResult = generateCode('create a glowing navbar');
+    expect(navbarResult.points).toBe(50);
+    
+    const gameResult = generateCode('make a pixel art game');
+    expect(gameResult.points).toBe(100);
+  });
 });

@@ -188,12 +188,23 @@ function App() {
         {/* Header */}
         <header className="text-center mb-8 relative">
           <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={() => setShowBadges(!showBadges)}
-              className="px-4 py-2 bg-yellow-500 text-black rounded-full hover:scale-105 transform transition-all duration-200"
-            >
-              🏆 Badges ({badges.filter(b => b.earned).length})
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowBadges(!showBadges)}
+                className="px-4 py-2 bg-yellow-500 text-black rounded-full hover:scale-105 transform transition-all duration-200"
+              >
+                🏆 Badges ({badges.filter(b => b.earned).length})
+              </button>
+              <a
+                href="https://github.com/alljaybly/minikiro/blob/main/README.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-500 text-white rounded-full hover:scale-105 transform transition-all duration-200"
+                aria-label="Open setup guide in new tab"
+              >
+                📚 Setup Guide
+              </a>
+            </div>
             
             <h1 className={`text-4xl ${
               isKidMode 

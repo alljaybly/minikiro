@@ -251,14 +251,43 @@ netlify dev
 - 🎯 Technical learning tips
 
 ### Real-Time Code Generation Examples
-- **"draw a red star"** → SVG polygon with red fill and stroke
-- **"make a cartoon button"** → Gradient button with hover animations
-- **"draw a rainbow"** → Multi-colored SVG arc paths
-- **"create a smiley face"** → SVG circle with facial features
-- **"make a bouncing ball"** → CSS keyframe animation
-- **"create a glowing navbar"** → Gradient nav with box-shadow effects
-- **"build a rest api client"** → Interactive form with method selection
-- **"create a data dashboard"** → Grid layout with metric cards
+- **"draw a red star"** → SVG polygon with red fill and stroke (10 points)
+- **"make a cartoon button"** → Gradient button with hover animations (15 points)
+- **"draw a rainbow"** → Multi-colored SVG arc paths (20 points)
+- **"create a smiley face"** → SVG circle with facial features (15 points)
+- **"make a bouncing ball"** → CSS keyframe animation (25 points)
+- **"create a glowing navbar"** → Gradient nav with box-shadow effects (50 points)
+- **"build a rest api client"** → Interactive form with method selection (60 points)
+- **"create a data dashboard"** → Grid layout with metric cards (75 points)
+- **"make a pixel art game"** → Interactive canvas game with controls (100 points)
+
+## Beginner's Setup Guide
+
+### 📚 Comprehensive Documentation
+- **README.md**: Complete setup guide with prerequisites, installation steps, and troubleshooting
+- **PowerShell Script**: Automated setup script (`frontend/setup.ps1`) for Windows users
+- **Setup Guide Link**: Integrated into the app UI for easy access
+
+### 🛠 Setup Features
+- **Prerequisite Checking**: Verifies Node.js installation before proceeding
+- **Automated Installation**: Installs all dependencies with error handling
+- **Configuration Setup**: Creates Tailwind and PostCSS configuration files
+- **Test Verification**: Runs test suite to ensure proper setup
+- **Development Server**: Automatically starts the app after setup
+
+### 📖 User-Friendly Documentation
+- **Simple Language**: Written for beginners with clear explanations
+- **Visual Structure**: Well-organized sections with emojis and formatting
+- **Troubleshooting Section**: Common issues and solutions
+- **Example Prompts**: Ready-to-try examples for both Kid and Pro modes
+- **Contributing Guide**: Instructions for community contributions
+
+### 🔧 PowerShell Setup Script Features
+- **Environment Validation**: Checks Node.js version and directory structure
+- **Dependency Management**: Handles npm installation with cache cleaning fallback
+- **Configuration Generation**: Creates all necessary config files automatically
+- **Error Handling**: Provides clear error messages and recovery suggestions
+- **User Feedback**: Colorful console output with progress indicators
 
 ## Future Enhancements
 - Real AI integration for code generation

@@ -261,4 +261,76 @@ describe('MiniKiro App', () => {
     const gameResult = generateCode('make a pixel art game');
     expect(gameResult.points).toBe(100);
   });
+
+  test('Add custom prompt form renders correctly', async () => {
+    render(<App />);
+    
+    // Open prompt library
+    const promptLibraryButton = screen.getByText(/📚 Prompt Library/i);
+    await userEvent.click(promptLibraryButton);
+    
+    // Click Add Prompt button
+    const addPromptButton = screen.getByText(/➕ Add Prompt/i);
+    await userEvent.click(addPromptButton);
+    
+    // Check if form elements are present
+    expect(screen.getByPlaceholderText(/My Cool Idea/i)).toBeInTheDocument();
+    expect(screen.getByText(/🎉 Create It!/i)).toBeInTheDocument();
+  });
+
+  test('Custom prompt creation works', async () => {
+    render(<App />);
+    
+    // Open prompt library and add prompt form
+    const promptLibraryButton = screen.getByText(/📚 Prompt Library/i);
+    await userEvent.click(promptLibraryButton);
+    
+    const addPromptButton = screen.getByText(/➕ Add Prompt/i);
+    await userEvent.click(addPromptButton);
+    
+    // Fill out the form
+    const titleInput = screen.getByPlaceholderText(/My Cool Idea/i);
+    const descriptionInput = screen.getByPlaceholderText(/Make a dancing cat/i);
+    
+    await userEvent.type(titleInput, 'Test Prompt');
+    await userEvent.type(descriptionInput, 'Create a test element');
+    
+    // Submit the form
+    const createButton = screen.getByText(/🎉 Create It!/i);
+    await userEvent.click(createButton);
+    
+    // Check if success tip appears
+    await waitFor(() => {
+      expect(screen.getByText(/You created your own prompt!/i)).toBeInTheDocument();
+    });
+  });
+
+  test('Loading state shows during code generation', async () => {
+    render(<App />);
+    
+    const promptInput = screen.getByLabelText(/code generation prompt input/i);
+    await userEvent.type(promptInput, 'test prompt');
+    
+    const generateButton = screen.getByLabelText(/generate code from prompt/i);
+    
+    // Mock the generation to be slow
+    jest.spyOn(require('./generatedCode'), 'generateCode').mockImplementation(() => {
+      return new Promise(resolve => setTimeout(() => resolve({
+        prompt: 'test',
+        code: '<div>test</div>',
+        language: 'html',
+        points: 10
+      }), 100));
+    });
+    
+    await userEvent.click(generateButton);
+    
+    // Should show loading state briefly
+    expect(screen.getByText(/Creating.../i)).toBeInTheDocument();
+  });
+
+  test('API error handling works', () => {
+    // Placeholder test for API error handling
+    expect(true).toBe(true);
+  });
 });

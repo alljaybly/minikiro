@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import html2canvas from 'html2canvas';
+import { HfInference } from '@huggingface/inference';
 import { generateCode, formatCode, CodeResponse } from './generatedCode';
 
 interface Badge {
@@ -9,6 +10,15 @@ interface Badge {
   description: string;
   earned: boolean;
   icon: string;
+}
+
+interface CustomPrompt {
+  id: string;
+  title: string;
+  description: string;
+  language: string;
+  createdAt: string;
+  isKidMode: boolean;
 }
 
 function App() {
@@ -28,13 +38,59 @@ function App() {
     { id: '2', name: 'Button Master', description: 'Made an awesome button!', earned: false, icon: '🔘' },
     { id: '3', name: 'Rainbow Artist', description: 'Drew a beautiful rainbow!', earned: false, icon: '🌈' },
     { id: '4', name: 'Pro Developer', description: 'Switched to Pro Mode!', earned: false, icon: '💻' },
-    { id: '5', name: 'Code Sharer', description: 'Shared your first code card!', earned: false, icon: '📤' }
+    { id: '5', name: 'Code Sharer', description: 'Shared your first code card!', earned: false, icon: '📤' },
+    { id: '6', name: 'Prompt Creator', description: 'Created your first custom prompt!', earned: false, icon: '✨' }
   ]);
   const [easterEggActive, setEasterEggActive] = useState(false);
+  const [customPrompts, setCustomPrompts] = useState<CustomPrompt[]>([]);
+  const [showAddPrompt, setShowAddPrompt] = useState(false);
+  const [newPromptTitle, setNewPromptTitle] = useState('');
+  const [newPromptDescription, setNewPromptDescription] = useState('');
+  const [newPromptLanguage, setNewPromptLanguage] = useState('html');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  const handleGenerateCode = () => {
-    if (prompt.trim()) {
-      const response = generateCode(prompt);
+  // Initialize Hugging Face client
+  const hfClient = process.env.REACT_APP_HF_TOKEN ? new HfInference(process.env.REACT_APP_HF_TOKEN) : null;
+
+  const handleGenerateCode = async () => {
+    if (!prompt.trim()) return;
+    
+    setIsGenerating(true);
+    setApiError('');
+    
+    try {
+      let response: CodeResponse;
+      
+      // Try Hugging Face API first if token is available
+      if (hfClient && process.env.REACT_APP_HF_TOKEN) {
+        try {
+          const result = await hfClient.textGeneration({
+            model: 'bigcode/starcoder',
+            inputs: `Generate clean, functional ${newPromptLanguage.toUpperCase()} code for: ${prompt}\n\nCode:`,
+            parameters: {
+              max_new_tokens: 500,
+              temperature: 0.7,
+              return_full_text: false
+            }
+          });
+          
+          const generatedText = result.generated_text || '';
+          response = {
+            prompt: prompt,
+            code: generatedText.trim(),
+            language: detectLanguage(generatedText) || 'html',
+            points: calculatePoints(prompt)
+          };
+        } catch (apiErr) {
+          console.warn('Hugging Face API failed, falling back to local generation:', apiErr);
+          response = generateCode(prompt);
+        }
+      } else {
+        // Fallback to local generation
+        response = generateCode(prompt);
+      }
+      
       setGeneratedCode(response);
       setShowCode(true);
       setShowPreview(true);
@@ -56,7 +112,27 @@ function App() {
       if (Math.random() < 0.05) {
         triggerEasterEgg();
       }
+    } catch (error) {
+      console.error('Code generation failed:', error);
+      setApiError('Failed to generate code. Please try again.');
+    } finally {
+      setIsGenerating(false);
     }
+  };
+
+  const detectLanguage = (code: string): string => {
+    if (code.includes('<') && code.includes('>')) return 'html';
+    if (code.includes('def ') || code.includes('import ')) return 'python';
+    if (code.includes('function') || code.includes('const ') || code.includes('let ')) return 'javascript';
+    return 'html';
+  };
+
+  const calculatePoints = (prompt: string): number => {
+    const complexity = prompt.split(' ').length;
+    if (complexity <= 3) return 10;
+    if (complexity <= 6) return 25;
+    if (complexity <= 10) return 50;
+    return 100;
   };
 
   const awardBadge = (badgeId: string) => {
@@ -147,6 +223,51 @@ function App() {
     link.href = URL.createObjectURL(blob);
     link.click();
   };
+
+  const handleAddCustomPrompt = () => {
+    if (!newPromptTitle.trim() || !newPromptDescription.trim()) return;
+    
+    const newPrompt: CustomPrompt = {
+      id: Date.now().toString(),
+      title: newPromptTitle.trim(),
+      description: newPromptDescription.trim(),
+      language: newPromptLanguage,
+      createdAt: new Date().toISOString(),
+      isKidMode: isKidMode
+    };
+    
+    const updatedPrompts = [...customPrompts, newPrompt];
+    setCustomPrompts(updatedPrompts);
+    localStorage.setItem('minikiro_custom_prompts', JSON.stringify(updatedPrompts));
+    
+    // Award badge for creating first custom prompt
+    awardBadge('6');
+    showLearningTip(isKidMode ? 'You created your own prompt! 🌟' : 'Custom prompt added to library! ✨');
+    
+    // Reset form
+    setNewPromptTitle('');
+    setNewPromptDescription('');
+    setNewPromptLanguage('html');
+    setShowAddPrompt(false);
+  };
+
+  const handleSelectCustomPrompt = (customPrompt: CustomPrompt) => {
+    setPrompt(customPrompt.description);
+    setNewPromptLanguage(customPrompt.language);
+    setShowPromptLibrary(false);
+  };
+
+  // Load custom prompts from localStorage on component mount
+  useEffect(() => {
+    const savedPrompts = localStorage.getItem('minikiro_custom_prompts');
+    if (savedPrompts) {
+      try {
+        setCustomPrompts(JSON.parse(savedPrompts));
+      } catch (error) {
+        console.error('Failed to load custom prompts:', error);
+      }
+    }
+  }, []);
 
   // Update sanitized HTML when code changes
   useEffect(() => {
@@ -315,10 +436,97 @@ function App() {
             <div className={`mb-4 p-4 rounded-lg ${
               isKidMode ? 'bg-white bg-opacity-20' : 'bg-gray-800'
             }`}>
-              <h4 className={`font-bold mb-3 ${isKidMode ? 'text-white' : 'text-green-400'}`}>
-                {isKidMode ? '🎨 Fun Prompts for Kids:' : '💻 Pro Prompts:'}
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className={`font-bold ${isKidMode ? 'text-white' : 'text-green-400'}`}>
+                  {isKidMode ? '🎨 Fun Prompts for Kids:' : '💻 Pro Prompts:'}
+                </h4>
+                <button
+                  onClick={() => setShowAddPrompt(!showAddPrompt)}
+                  className={`px-3 py-1 rounded-lg text-sm font-bold transition-all duration-200 hover:scale-105 ${
+                    isKidMode 
+                      ? 'bg-yellow-400 text-purple-800' 
+                      : 'bg-purple-600 text-white'
+                  }`}
+                >
+                  {showAddPrompt ? '❌ Cancel' : '➕ Add Prompt'}
+                </button>
+              </div>
+
+              {/* Add Custom Prompt Form */}
+              {showAddPrompt && (
+                <div className={`mb-4 p-4 rounded-lg border-2 ${
+                  isKidMode ? 'bg-white bg-opacity-10 border-yellow-400' : 'bg-gray-700 border-purple-500'
+                }`}>
+                  <h5 className={`font-bold mb-3 ${isKidMode ? 'text-white' : 'text-purple-400'}`}>
+                    {isKidMode ? '✨ Create Your Own Prompt!' : '🛠 Create Custom Prompt'}
+                  </h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className={`block text-sm mb-1 ${isKidMode ? 'text-white' : 'text-gray-300'}`}>
+                        {isKidMode ? '🏷 Name:' : 'Title:'}
+                      </label>
+                      <input
+                        type="text"
+                        value={newPromptTitle}
+                        onChange={(e) => setNewPromptTitle(e.target.value)}
+                        placeholder={isKidMode ? "My Cool Idea" : "Custom Prompt Title"}
+                        className={`w-full p-2 rounded text-sm ${
+                          isKidMode 
+                            ? 'bg-white bg-opacity-30 text-white placeholder-white placeholder-opacity-70' 
+                            : 'bg-gray-600 text-white placeholder-gray-400'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm mb-1 ${isKidMode ? 'text-white' : 'text-gray-300'}`}>
+                        {isKidMode ? '🎨 Type:' : 'Language:'}
+                      </label>
+                      <select
+                        value={newPromptLanguage}
+                        onChange={(e) => setNewPromptLanguage(e.target.value)}
+                        className={`w-full p-2 rounded text-sm ${
+                          isKidMode 
+                            ? 'bg-white bg-opacity-30 text-white' 
+                            : 'bg-gray-600 text-white'
+                        }`}
+                      >
+                        <option value="html">{isKidMode ? '🌐 Web Page' : 'HTML/CSS'}</option>
+                        <option value="javascript">{isKidMode ? '⚡ Interactive' : 'JavaScript'}</option>
+                        <option value="python">{isKidMode ? '🐍 Python' : 'Python'}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className={`block text-sm mb-1 ${isKidMode ? 'text-white' : 'text-gray-300'}`}>
+                      {isKidMode ? '📝 What should it do?' : 'Description:'}
+                    </label>
+                    <textarea
+                      value={newPromptDescription}
+                      onChange={(e) => setNewPromptDescription(e.target.value)}
+                      placeholder={isKidMode ? "Make a dancing cat with rainbow colors" : "Create a responsive navigation bar with hover effects"}
+                      className={`w-full p-2 rounded text-sm h-20 resize-none ${
+                        isKidMode 
+                          ? 'bg-white bg-opacity-30 text-white placeholder-white placeholder-opacity-70' 
+                          : 'bg-gray-600 text-white placeholder-gray-400'
+                      }`}
+                    />
+                  </div>
+                  <button
+                    onClick={handleAddCustomPrompt}
+                    disabled={!newPromptTitle.trim() || !newPromptDescription.trim()}
+                    className={`mt-3 px-4 py-2 rounded-lg font-bold transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
+                      isKidMode 
+                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
+                        : 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
+                    }`}
+                  >
+                    {isKidMode ? '🎉 Create It!' : '✨ Add Prompt'}
+                  </button>
+                </div>
+              )}
+
+              {/* Built-in Prompts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
                 {(isKidMode ? kidPrompts : proPrompts).map((promptText, index) => (
                   <button
                     key={index}
@@ -333,6 +541,36 @@ function App() {
                   </button>
                 ))}
               </div>
+
+              {/* Custom Prompts */}
+              {customPrompts.length > 0 && (
+                <>
+                  <h5 className={`font-bold mb-3 ${isKidMode ? 'text-white' : 'text-purple-400'}`}>
+                    {isKidMode ? '🌟 Your Amazing Creations:' : '🛠 Your Custom Prompts:'}
+                  </h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto">
+                    {customPrompts
+                      .filter(cp => isKidMode ? cp.isKidMode : !cp.isKidMode)
+                      .map((customPrompt) => (
+                      <button
+                        key={customPrompt.id}
+                        onClick={() => handleSelectCustomPrompt(customPrompt)}
+                        className={`p-3 rounded-lg text-left transition-all duration-200 hover:scale-105 border-2 ${
+                          isKidMode 
+                            ? 'bg-yellow-400 bg-opacity-20 text-white border-yellow-400 hover:bg-opacity-30' 
+                            : 'bg-purple-600 bg-opacity-20 text-purple-300 border-purple-500 hover:bg-opacity-30'
+                        }`}
+                      >
+                        <div className="font-bold text-sm">{customPrompt.title}</div>
+                        <div className="text-xs opacity-80 mt-1">{customPrompt.description}</div>
+                        <div className="text-xs opacity-60 mt-1">
+                          {customPrompt.language.toUpperCase()} • {new Date(customPrompt.createdAt).toLocaleDateString()}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -351,7 +589,7 @@ function App() {
           <div className="flex gap-4 mt-4">
             <button
               onClick={handleGenerateCode}
-              disabled={!prompt.trim()}
+              disabled={!prompt.trim() || isGenerating}
               className={`px-6 py-3 font-bold rounded-lg hover:scale-105 transform transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
                 isKidMode 
                   ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' 
@@ -359,9 +597,31 @@ function App() {
               }`}
               aria-label="Generate code from prompt"
             >
-              {isKidMode ? '✨ Create Magic!' : '🚀 Generate Code'}
+              {isGenerating ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {isKidMode ? 'Creating...' : 'Generating...'}
+                </span>
+              ) : (
+                isKidMode ? '✨ Create Magic!' : '🚀 Generate Code'
+              )}
             </button>
+            {process.env.REACT_APP_HF_TOKEN && (
+              <div className={`text-xs px-2 py-1 rounded ${isKidMode ? 'text-white' : 'text-green-400'}`}>
+                🤖 AI-Powered
+              </div>
+            )}
           </div>
+          
+          {/* API Error Display */}
+          {apiError && (
+            <div className="mt-4 p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg">
+              <p className="text-red-400 text-sm">❌ {apiError}</p>
+            </div>
+          )}
         </div>
 
         {/* Code Output and Preview Section */}
@@ -473,13 +733,15 @@ function App() {
                   }`}>
                     {isKidMode ? '✨ Magic!' : 'Preview'}
                   </div>
-                  <div 
-                    className={`bg-white rounded-lg p-4 min-h-[200px] ${
+                  <iframe
+                    srcDoc={sanitizedHTML}
+                    sandbox="allow-scripts allow-same-origin"
+                    className={`w-full bg-white rounded-lg min-h-[200px] ${
                       isKidMode 
                         ? 'border-4 border-yellow-400 shadow-xl' 
                         : 'border-2 border-pink-500 shadow-neon'
                     }`}
-                    dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
+                    title="Code Preview"
                   />
                   <div className={`mt-2 text-xs ${isKidMode ? 'text-white' : 'text-gray-500'}`}>
                     {isKidMode ? '🌟 Your creation comes to life!' : 'Live preview of generated HTML/CSS/JS'}

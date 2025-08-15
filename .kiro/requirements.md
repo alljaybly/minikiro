@@ -289,6 +289,42 @@ netlify dev
 - **Error Handling**: Provides clear error messages and recovery suggestions
 - **User Feedback**: Colorful console output with progress indicators
 
+## Infinitely Adding Prompts Feature
+
+### ✨ Custom Prompt Creation
+- **Add Prompt Button**: Integrated into prompt library for easy access
+- **Smart Form**: Mode-specific UI (colorful for kids, professional for pros)
+- **Language Selection**: HTML/CSS, JavaScript, Python options
+- **Local Storage**: Persistent storage of custom prompts across sessions
+- **Infinite Scrolling**: Unlimited custom prompts with scrollable interface
+
+### 🤖 Hugging Face API Integration
+- **Real-time Generation**: Uses bigcode/starcoder model for code generation
+- **Fallback System**: Local generation when API is unavailable
+- **Loading States**: Visual feedback during API calls
+- **Error Handling**: Graceful degradation with user-friendly error messages
+- **Token Management**: Secure API token handling via environment variables
+
+### 🎯 Enhanced User Experience
+- **Dynamic Points**: Calculated based on prompt complexity (10-100 points)
+- **Language Detection**: Automatic language detection from generated code
+- **Secure Preview**: iframe-based rendering with sandbox security
+- **Badge System**: "Prompt Creator" badge for first custom prompt
+- **Mode-Specific Filtering**: Custom prompts filtered by Kid/Pro mode
+
+### 🛠 Technical Implementation
+- **TypeScript Interfaces**: Strongly typed custom prompt structure
+- **React Hooks**: useState and useEffect for state management
+- **Local Storage API**: Persistent data storage with error handling
+- **Hugging Face Client**: @huggingface/inference integration
+- **Security**: DOMPurify sanitization and iframe sandboxing
+
+### 📊 Custom Prompt Features
+- **Metadata Tracking**: Creation date, mode, language, and description
+- **Visual Indicators**: Different styling for custom vs built-in prompts
+- **Search & Filter**: Mode-specific prompt filtering
+- **Export Ready**: Custom prompts work with all existing features (preview, format, share)
+
 ## Future Enhancements
 - Real AI integration for code generation
 - More programming languages support

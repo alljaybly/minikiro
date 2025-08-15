@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import html2canvas from 'html2canvas';
-import { generateCode, formatCode, CodeResponse, realTimeCodeMap } from './generatedCode';
+import { generateCode, formatCode, CodeResponse } from './generatedCode';
 
 interface Badge {
   id: string;

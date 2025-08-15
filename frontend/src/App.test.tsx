@@ -70,7 +70,7 @@ describe('MiniKiro App', () => {
     await userEvent.type(promptInput, 'javascript counter');
     await userEvent.click(generateButton);
     
-    // Find and click format button
+    // Find and click format button (Kid Mode shows "Make Pretty")
     const formatButton = screen.getByLabelText(/format code using agent hook/i);
     expect(formatButton).toBeInTheDocument();
     
@@ -81,9 +81,9 @@ describe('MiniKiro App', () => {
       expect(screen.getByText(/formatting\.\.\./i)).toBeInTheDocument();
     });
     
-    // Wait for formatting to complete
+    // Wait for formatting to complete (Kid Mode shows "Make Pretty")
     await waitFor(() => {
-      expect(screen.getByText(/format code/i)).toBeInTheDocument();
+      expect(screen.getByText(/make pretty/i)).toBeInTheDocument();
     }, { timeout: 1000 });
   });
 
@@ -91,7 +91,9 @@ describe('MiniKiro App', () => {
     render(<App />);
     
     const appContainer = document.querySelector('.min-h-screen');
-    expect(appContainer).toHaveClass('bg-gray-900', 'text-green-400', 'font-press-start');
+    // App starts in Kid Mode by default
+    expect(appContainer).toHaveClass('font-press-start');
+    expect(appContainer).toHaveClass('text-white'); // Kid mode text color
   });
 
   test('accessibility attributes are present', async () => {
@@ -141,9 +143,9 @@ describe('MiniKiro App', () => {
     await userEvent.type(promptInput, 'python hello world');
     await userEvent.click(generateButton);
     
-    // Check if preview shows not available message
-    expect(screen.getByText(/preview not available/i)).toBeInTheDocument();
-    expect(screen.getByText(/preview only supports html\/css\/javascript/i)).toBeInTheDocument();
+    // Check if preview shows kid-friendly message (since app starts in Kid Mode)
+    expect(screen.getByText(/this code runs in the computer/i)).toBeInTheDocument();
+    expect(screen.getByText(/some code needs special programs/i)).toBeInTheDocument();
   });
 
   test('Jest exits without hanging', () => {
@@ -160,5 +162,81 @@ describe('MiniKiro App', () => {
     
     // Log Git hook test
     console.log('Git command logging hook test completed');
+  });
+
+  test('Kid Mode renders correctly', () => {
+    render(<App />);
+    
+    // Should start in Kid Mode by default
+    expect(screen.getByText(/Kid Mode \(Ages 6-16\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/🎓 Pro Mode/i)).toBeInTheDocument();
+  });
+
+  test('Pro Mode toggle works', async () => {
+    render(<App />);
+    
+    const modeToggle = screen.getByText(/🎓 Pro Mode/i);
+    await userEvent.click(modeToggle);
+    
+    expect(screen.getByText(/Pro Mode \(Ages 17\+\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/🎨 Kid Mode/i)).toBeInTheDocument();
+  });
+
+  test('Prompt library shows correct prompts for each mode', async () => {
+    render(<App />);
+    
+    // Test Kid Mode prompts
+    const promptLibraryButton = screen.getByText(/📚 Prompt Library/i);
+    await userEvent.click(promptLibraryButton);
+    
+    expect(screen.getByText(/draw a red star/i)).toBeInTheDocument();
+    expect(screen.getByText(/make a cartoon button/i)).toBeInTheDocument();
+    
+    // Close prompt library first
+    await userEvent.click(promptLibraryButton);
+    
+    // Switch to Pro Mode
+    const modeToggle = screen.getByText(/🎓 Pro Mode/i);
+    await userEvent.click(modeToggle);
+    
+    // Wait for mode switch and then test Pro Mode prompts
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    const promptLibraryButtonPro = screen.getByText(/📚 Prompt Library/i);
+    await userEvent.click(promptLibraryButtonPro);
+    
+    expect(screen.getByText(/create a glowing navbar/i)).toBeInTheDocument();
+    expect(screen.getByText(/build a rest api client/i)).toBeInTheDocument();
+  });
+
+  test('Kid Mode renders red star correctly', () => {
+    const { generateCode } = require('./generatedCode');
+    const result = generateCode('draw a red star');
+    
+    expect(result.code).toContain('<svg');
+    expect(result.code).toContain('polygon');
+    expect(result.code).toContain('fill="red"');
+    expect(result.language).toBe('html');
+  });
+
+  test('Badges system works', async () => {
+    render(<App />);
+    
+    const badgesButton = screen.getByText(/🏆 Badges/i);
+    await userEvent.click(badgesButton);
+    
+    expect(screen.getByText(/Your Badges/i)).toBeInTheDocument();
+    expect(screen.getByText(/Star Coder/i)).toBeInTheDocument();
+    expect(screen.getByText(/Button Master/i)).toBeInTheDocument();
+  });
+
+  test('Real-time code generation works for glowing navbar', () => {
+    const { generateCode } = require('./generatedCode');
+    const result = generateCode('create a glowing navbar');
+    
+    expect(result.code).toContain('<nav');
+    expect(result.code).toContain('linear-gradient');
+    expect(result.code).toContain('box-shadow');
+    expect(result.language).toBe('html');
   });
 });

@@ -273,9 +273,10 @@ function App() {
   useEffect(() => {
     if (generatedCode && (generatedCode.language === 'html' || generatedCode.language === 'javascript')) {
       const sanitized = DOMPurify.sanitize(generatedCode.code, {
-        ADD_TAGS: ['button', 'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'svg', 'polygon', 'circle', 'path', 'text', 'nav', 'ul', 'li', 'a', 'style', 'input', 'textarea', 'select', 'option', 'label'],
-        ADD_ATTR: ['style', 'class', 'onclick', 'onmouseover', 'onmouseout', 'width', 'height', 'viewBox', 'points', 'fill', 'stroke', 'stroke-width', 'cx', 'cy', 'r', 'd', 'x', 'y', 'text-anchor', 'font-family', 'font-size', 'href', 'type', 'placeholder'],
-        ALLOW_DATA_ATTR: false
+        ADD_TAGS: ['button', 'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'svg', 'polygon', 'circle', 'path', 'text', 'nav', 'ul', 'li', 'a', 'style', 'input', 'textarea', 'select', 'option', 'label', 'canvas', 'script'],
+        ADD_ATTR: ['style', 'class', 'onclick', 'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'onmousemove', 'ontouchstart', 'ontouchmove', 'ontouchend', 'width', 'height', 'viewBox', 'points', 'fill', 'stroke', 'stroke-width', 'cx', 'cy', 'r', 'd', 'x', 'y', 'text-anchor', 'font-family', 'font-size', 'href', 'type', 'placeholder', 'id', 'touch-action'],
+        ALLOW_DATA_ATTR: false,
+        ALLOW_UNKNOWN_PROTOCOLS: false
       });
       setSanitizedHTML(sanitized);
     } else {
@@ -735,13 +736,14 @@ function App() {
                   </div>
                   <iframe
                     srcDoc={sanitizedHTML}
-                    sandbox="allow-scripts allow-same-origin"
-                    className={`w-full bg-white rounded-lg min-h-[200px] ${
+                    sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+                    className={`w-full bg-white rounded-lg min-h-[300px] ${
                       isKidMode 
                         ? 'border-4 border-yellow-400 shadow-xl' 
                         : 'border-2 border-pink-500 shadow-neon'
                     }`}
                     title="Code Preview"
+                    style={{ minHeight: '300px' }}
                   />
                   <div className={`mt-2 text-xs ${isKidMode ? 'text-white' : 'text-gray-500'}`}>
                     {isKidMode ? '🌟 Your creation comes to life!' : 'Live preview of generated HTML/CSS/JS'}

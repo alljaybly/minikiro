@@ -31,12 +31,20 @@ Write-Host ""
 Write-Host "📦 Installing dependencies..." -ForegroundColor Yellow
 Write-Host "This might take a few minutes..." -ForegroundColor Gray
 
-# Install dependencies
+# Install dependencies including Hugging Face
 try {
+    Write-Host "Installing core dependencies..." -ForegroundColor Gray
     npm install
     if ($LASTEXITCODE -ne 0) {
         throw "npm install failed"
     }
+    
+    Write-Host "Installing AI and interactive features..." -ForegroundColor Gray
+    npm install @huggingface/inference html2canvas dompurify
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "⚠️  Some optional packages failed to install, but core functionality should work" -ForegroundColor Yellow
+    }
+    
     Write-Host "✅ Dependencies installed successfully!" -ForegroundColor Green
 } catch {
     Write-Host "❌ Failed to install dependencies" -ForegroundColor Red
@@ -113,6 +121,25 @@ code {
 
 Set-Content -Path "src/index.css" -Value $indexCSS -Encoding UTF8
 Write-Host "✅ index.css updated with Tailwind directives" -ForegroundColor Green
+
+# Create .env file for Hugging Face API
+if (-not (Test-Path ".env")) {
+    $envContent = @"
+# Hugging Face API Token (Optional)
+# Get your token from: https://huggingface.co/settings/tokens
+REACT_APP_HF_TOKEN=your_huggingface_token_here
+
+# Instructions:
+# 1. Replace 'your_huggingface_token_here' with your actual token
+# 2. This enables AI-powered code generation
+# 3. App works without token using local generation
+"@
+    Set-Content -Path ".env" -Value $envContent -Encoding UTF8
+    Write-Host "✅ .env file created for API configuration" -ForegroundColor Green
+    Write-Host "📝 Edit .env to add your Hugging Face token for AI features" -ForegroundColor Yellow
+} else {
+    Write-Host "✅ .env file already exists" -ForegroundColor Green
+}
 
 Write-Host ""
 Write-Host "🧪 Running tests to verify setup..." -ForegroundColor Yellow

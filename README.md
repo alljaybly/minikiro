@@ -26,6 +26,7 @@ Before you begin, make sure you have these installed:
 1. **Node.js (v20 LTS)** - Download from [nodejs.org](https://nodejs.org/)
 2. **Git** - Download from [git-scm.com](https://git-scm.com/)
 3. **VS Code** (recommended) - Download from [code.visualstudio.com](https://code.visualstudio.com/)
+4. **Hugging Face API Token** (optional) - Get from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
 
 ### 📥 Installation Steps
 
@@ -42,6 +43,11 @@ Before you begin, make sure you have these installed:
    ```
    This will automatically install everything and start the app!
 
+3. **Configure AI Features (Optional):**
+   - The setup script creates a `.env` file
+   - Replace `your_huggingface_token_here` with your actual token
+   - This enables real-time AI code generation
+
 #### Option 2: Manual Setup
 1. **Clone the repository:**
    ```bash
@@ -54,12 +60,23 @@ Before you begin, make sure you have these installed:
    npm install
    ```
 
-3. **Start the development server:**
+3. **Configure Tailwind CSS:**
+   ```bash
+   npx tailwindcss init -p
+   ```
+
+4. **Add Hugging Face token (Optional):**
+   Create `.env` file with:
+   ```
+   REACT_APP_HF_TOKEN=your_token_here
+   ```
+
+5. **Start the development server:**
    ```bash
    npm start
    ```
 
-4. **Open your browser:**
+6. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🎯 Try These Fun Prompts!
@@ -70,13 +87,20 @@ Before you begin, make sure you have these installed:
 - `"draw a rainbow"` → Generates a multi-colored rainbow
 - `"create a smiley face"` → Makes a happy SVG face
 - `"make a bouncing ball"` → Creates a CSS animation
+- `"make a pixel art game"` → Interactive pixel game with controls
 
 ### Pro Mode Examples:
 - `"create a glowing navbar"` → Builds a professional navigation bar
 - `"build a rest api client"` → Creates an interactive API testing tool
 - `"create a data dashboard"` → Generates a metrics dashboard
-- `"animated loading spinner"` → Makes a CSS loading animation
+- `"make a soccer ball game"` → Animated bouncing soccer ball
+- `"move in the direction you swipe"` → Interactive touch/swipe game
 - `"neon card"` → Creates a cyberpunk-styled card component
+
+### 🎮 Interactive Games:
+- **Swipe Game**: Try "move in the direction you swipe" for a touch-controlled game
+- **Soccer Ball**: "make a soccer ball game" creates a bouncing ball animation
+- **Pixel Art**: "make a pixel art game" builds a retro-style game with controls
 
 ## 🏆 Features Overview
 
@@ -134,10 +158,26 @@ Before you begin, make sure you have these installed:
   npm run build
   ```
 
+#### Swipe game not working
+- **Solution**: Make sure you're using a touch device or mouse drag
+- **Check**: Verify the iframe preview window is large enough
+- **Note**: Some games work better on mobile devices
+
+#### API errors (Hugging Face)
+- **Solution**: Check your `REACT_APP_HF_TOKEN` in `.env` file
+- **Fallback**: App works without API token using local generation
+- **Verify**: Token should start with `hf_`
+
+#### Custom prompts not saving
+- **Solution**: Check browser's local storage permissions
+- **Clear**: Try clearing browser cache and localStorage
+- **Fallback**: Use incognito mode to test
+
 ### Still Having Issues?
 1. Check the [Issues page](https://github.com/alljaybly/minikiro/issues) on GitHub
 2. Make sure you're using Node.js v20 LTS
 3. Try running the setup script again: `.\frontend\setup.ps1`
+4. Test with different prompts to isolate the issue
 
 ## 📁 Project Structure
 

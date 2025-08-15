@@ -210,9 +210,10 @@ describe('MiniKiro App', () => {
   });
 
   test('Kid Mode renders red star correctly', () => {
-    const { generateCode } = require('./generatedCode');
-    const result = generateCode('draw a red star');
+    const generatedCodeModule = require('./generatedCode');
+    const result = generatedCodeModule.generateCode('draw a red star');
     
+    expect(result).toBeDefined();
     expect(result.code).toContain('<svg');
     expect(result.code).toContain('polygon');
     expect(result.code).toContain('fill="red"');
@@ -231,9 +232,10 @@ describe('MiniKiro App', () => {
   });
 
   test('Real-time code generation works for glowing navbar', () => {
-    const { generateCode } = require('./generatedCode');
-    const result = generateCode('create a glowing navbar');
+    const generatedCodeModule = require('./generatedCode');
+    const result = generatedCodeModule.generateCode('create a glowing navbar');
     
+    expect(result).toBeDefined();
     expect(result.code).toContain('<nav');
     expect(result.code).toContain('linear-gradient');
     expect(result.code).toContain('box-shadow');
@@ -250,15 +252,18 @@ describe('MiniKiro App', () => {
   });
 
   test('Points system works in code generation', () => {
-    const { generateCode } = require('./generatedCode');
+    const generatedCodeModule = require('./generatedCode');
     
-    const starResult = generateCode('draw a red star');
+    const starResult = generatedCodeModule.generateCode('draw a red star');
+    expect(starResult).toBeDefined();
     expect(starResult.points).toBe(10);
     
-    const navbarResult = generateCode('create a glowing navbar');
+    const navbarResult = generatedCodeModule.generateCode('create a glowing navbar');
+    expect(navbarResult).toBeDefined();
     expect(navbarResult.points).toBe(50);
     
-    const gameResult = generateCode('make a pixel art game');
+    const gameResult = generatedCodeModule.generateCode('make a pixel art game');
+    expect(gameResult).toBeDefined();
     expect(gameResult.points).toBe(100);
   });
 
@@ -332,5 +337,79 @@ describe('MiniKiro App', () => {
   test('API error handling works', () => {
     // Placeholder test for API error handling
     expect(true).toBe(true);
+  });
+
+  test('Swipe prompt renders canvas with touch events', () => {
+    // Test the swipe game generation
+    const { generateCode } = require('./generatedCode');
+    const result = generateCode('move in the direction you swipe');
+    
+    expect(result).toBeDefined();
+    expect(result.code).toContain('<canvas');
+    expect(result.code).toContain('touchstart');
+    expect(result.code).toContain('touchmove');
+    expect(result.code).toContain('swipeGame');
+    expect(result.language).toBe('html');
+    expect(result.points).toBe(100);
+  });
+
+  test('Typo correction works for common mistakes', () => {
+    const { generateCode } = require('./generatedCode');
+    
+    // Test typo correction
+    const result1 = generateCode('move im the direcion you swipe');
+    expect(result1).toBeDefined();
+    expect(result1.code).toContain('<canvas');
+    expect(result1.points).toBe(100);
+    
+    const result2 = generateCode('creat a buton');
+    expect(result2).toBeDefined();
+    expect(result2.code).toContain('<button');
+    
+    const result3 = generateCode('mak a gam');
+    expect(result3).toBeDefined();
+    expect(result3.code).toContain('Interactive Game');
+  });
+
+  test('Soccer ball game renders correctly', () => {
+    const { generateCode } = require('./generatedCode');
+    const result = generateCode('make a soccer ball game');
+    
+    expect(result).toBeDefined();
+    expect(result.code).toContain('<canvas');
+    expect(result.code).toContain('soccerGame');
+    expect(result.code).toContain('Soccer Ball Game');
+    expect(result.language).toBe('html');
+    expect(result.points).toBe(100);
+  });
+
+  test('Custom prompt saves to local storage', () => {
+    // Mock localStorage
+    const localStorageMock = {
+      getItem: jest.fn(() => null),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    };
+    
+    // Store original localStorage
+    const originalLocalStorage = global.localStorage;
+    
+    // Replace with mock
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      writable: true
+    });
+    
+    render(<App />);
+    
+    // This test verifies localStorage integration exists
+    expect(localStorageMock.getItem).toHaveBeenCalledWith('minikiro_custom_prompts');
+    
+    // Restore original localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true
+    });
   });
 });

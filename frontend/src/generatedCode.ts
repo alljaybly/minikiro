@@ -368,50 +368,280 @@ export const realTimeCodeMap: Record<string, CodeResponse> = {
 </div>`,
     language: "html",
     points: 100
+  },
+  "make a soccer ball game": {
+    prompt: "make a soccer ball game",
+    code: `<div style="text-align: center; padding: 20px; background: #228B22; color: white;">
+  <h3 style="margin-bottom: 20px;">⚽ Soccer Ball Game</h3>
+  <canvas id="soccerGame" width="400" height="300" style="border: 2px solid #fff; background: #90EE90;"></canvas>
+  <p style="margin-top: 10px; font-size: 14px;">Watch the ball bounce around the field!</p>
+  <script>
+    const canvas = document.getElementById('soccerGame');
+    const ctx = canvas.getContext('2d');
+    let x = 200, y = 150, dx = 3, dy = -2, radius = 15;
+    
+    function drawBall() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw soccer ball
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#000';
+      ctx.fill();
+      
+      // Draw soccer ball pattern
+      ctx.beginPath();
+      ctx.arc(x, y, radius - 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      
+      // Draw pentagon pattern
+      ctx.beginPath();
+      ctx.moveTo(x, y - 8);
+      ctx.lineTo(x + 6, y - 3);
+      ctx.lineTo(x + 4, y + 5);
+      ctx.lineTo(x - 4, y + 5);
+      ctx.lineTo(x - 6, y - 3);
+      ctx.closePath();
+      ctx.fillStyle = '#000';
+      ctx.fill();
+      
+      // Update position
+      x += dx;
+      y += dy;
+      
+      // Bounce off walls
+      if (x + dx > canvas.width - radius || x + dx < radius) dx = -dx;
+      if (y + dy > canvas.height - radius || y + dy < radius) dy = -dy;
+    }
+    
+    setInterval(drawBall, 16);
+  </script>
+</div>`,
+    language: "html",
+    points: 100
+  },
+  "move in the direction you swipe": {
+    prompt: "move in the direction you swipe",
+    code: `<div style="text-align: center; padding: 20px; background: #1a1a2e; color: #eee;">
+  <h3 style="color: #00f5ff; margin-bottom: 20px;">👆 Swipe to Move Game</h3>
+  <canvas id="swipeGame" width="400" height="300" style="border: 2px solid #00f5ff; background: #16213e; touch-action: none;"></canvas>
+  <p style="margin-top: 10px; font-size: 14px; color: #00f5ff;">Swipe or drag to move the blue ball!</p>
+  <script>
+    const canvas = document.getElementById('swipeGame');
+    const ctx = canvas.getContext('2d');
+    let x = 200, y = 150, radius = 20;
+    let isDragging = false;
+    let lastX = 0, lastY = 0;
+    
+    function drawBall() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw glowing ball
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, '#00f5ff');
+      gradient.addColorStop(0.7, '#0080ff');
+      gradient.addColorStop(1, '#0040ff');
+      
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      // Add glow effect
+      ctx.shadowColor = '#00f5ff';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(x, y, radius - 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    
+    function getEventPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', (e) => {
+      const pos = getEventPos(e);
+      const dist = Math.sqrt((pos.x - x) ** 2 + (pos.y - y) ** 2);
+      if (dist <= radius) {
+        isDragging = true;
+        lastX = pos.x;
+        lastY = pos.y;
+      }
+    });
+    
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const pos = getEventPos(e);
+        x += (pos.x - lastX);
+        y += (pos.y - lastY);
+        x = Math.max(radius, Math.min(canvas.width - radius, x));
+        y = Math.max(radius, Math.min(canvas.height - radius, y));
+        lastX = pos.x;
+        lastY = pos.y;
+        drawBall();
+      }
+    });
+    
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+    
+    // Touch events
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const pos = getEventPos(e);
+      const dist = Math.sqrt((pos.x - x) ** 2 + (pos.y - y) ** 2);
+      if (dist <= radius) {
+        isDragging = true;
+        lastX = pos.x;
+        lastY = pos.y;
+      }
+    });
+    
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (isDragging) {
+        const pos = getEventPos(e);
+        x += (pos.x - lastX);
+        y += (pos.y - lastY);
+        x = Math.max(radius, Math.min(canvas.width - radius, x));
+        y = Math.max(radius, Math.min(canvas.height - radius, y));
+        lastX = pos.x;
+        lastY = pos.y;
+        drawBall();
+      }
+    });
+    
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      isDragging = false;
+    });
+    
+    drawBall();
+  </script>
+</div>`,
+    language: "html",
+    points: 100
   }
 };
 
+// Typo correction function
+function correctTypos(prompt: string): string {
+  return prompt
+    .toLowerCase()
+    .trim()
+    // Common typos
+    .replace(/\bim\b/g, 'in')
+    .replace(/\bdirecion\b/g, 'direction')
+    .replace(/\bdireciton\b/g, 'direction')
+    .replace(/\bswype\b/g, 'swipe')
+    .replace(/\bmove\s+im\s+the\s+direcion/g, 'move in the direction')
+    .replace(/\bmove\s+in\s+the\s+direcion/g, 'move in the direction')
+    .replace(/\bcreat\b/g, 'create')
+    .replace(/\bmak\b/g, 'make')
+    .replace(/\bbuton\b/g, 'button')
+    .replace(/\bnavbr\b/g, 'navbar')
+    .replace(/\bnavigaton\b/g, 'navigation')
+    .replace(/\banimaton\b/g, 'animation')
+    .replace(/\binteractiv\b/g, 'interactive')
+    .replace(/\bgam\b/g, 'game')
+    .replace(/\bsoccer\s+bal\b/g, 'soccer ball')
+    .replace(/\bfootbal\b/g, 'football')
+    .replace(/\bcanvs\b/g, 'canvas')
+    .replace(/\bpixl\b/g, 'pixel')
+    .replace(/\bart\b/g, 'art');
+}
+
 export function generateCode(prompt: string): CodeResponse {
-  const normalizedPrompt = prompt.toLowerCase().trim();
+  const correctedPrompt = correctTypos(prompt);
   
   // Check real-time code map first
-  if (realTimeCodeMap[normalizedPrompt]) {
-    return realTimeCodeMap[normalizedPrompt];
+  if (realTimeCodeMap[correctedPrompt]) {
+    return realTimeCodeMap[correctedPrompt];
   }
   
   // Check existing mock responses
   for (const [key, response] of Object.entries(mockVibeResponses)) {
-    if (normalizedPrompt.includes(key) || key.includes(normalizedPrompt)) {
+    if (correctedPrompt.includes(key) || key.includes(correctedPrompt)) {
       return response;
     }
   }
   
   // Generate dynamic code based on keywords
-  if (normalizedPrompt.includes('button')) {
+  if (correctedPrompt.includes('button')) {
     return {
-      prompt: normalizedPrompt,
+      prompt: correctedPrompt,
       code: `<button style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border: none; padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
   ${prompt}
 </button>`,
-      language: "html"
+      language: "html",
+      points: 15
     };
   }
   
-  if (normalizedPrompt.includes('card')) {
+  if (correctedPrompt.includes('card')) {
     return {
-      prompt: normalizedPrompt,
+      prompt: correctedPrompt,
       code: `<div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); max-width: 300px; margin: 20px;">
   <h3 style="color: #333; margin-bottom: 15px;">Card Title</h3>
   <p style="color: #666; line-height: 1.6;">This is a beautiful card component generated for: "${prompt}"</p>
   <button style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 15px;">Action</button>
 </div>`,
-      language: "html"
+      language: "html",
+      points: 25
+    };
+  }
+  
+  if (correctedPrompt.includes('game') || correctedPrompt.includes('interactive')) {
+    return {
+      prompt: correctedPrompt,
+      code: `<div style="text-align: center; padding: 20px; background: #2c3e50; color: white; border-radius: 12px;">
+  <h3 style="margin-bottom: 20px;">🎮 Interactive Game</h3>
+  <canvas id="gameCanvas" width="300" height="200" style="border: 2px solid #3498db; background: #34495e;"></canvas>
+  <div style="margin-top: 15px;">
+    <button onclick="startGame()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px;">Start Game</button>
+  </div>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameRunning = false;
+    
+    function startGame() {
+      gameRunning = !gameRunning;
+      if (gameRunning) {
+        drawGame();
+      }
+    }
+    
+    function drawGame() {
+      if (!gameRunning) return;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(Math.random() * 280, Math.random() * 180, 20, 20);
+      
+      setTimeout(drawGame, 100);
+    }
+  </script>
+</div>`,
+      language: "html",
+      points: 75
     };
   }
   
   // Default response for unknown prompts
   return {
-    prompt: normalizedPrompt,
+    prompt: correctedPrompt,
     code: `<div style="padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white; text-align: center; max-width: 400px; margin: 20px auto;">
   <h3 style="margin-bottom: 15px;">✨ Custom Code Generated</h3>
   <p style="margin-bottom: 15px;">Generated for: "${prompt}"</p>
@@ -420,7 +650,8 @@ export function generateCode(prompt: string): CodeResponse {
     console.log("${prompt}");
   </div>
 </div>`,
-    language: "html"
+    language: "html",
+    points: 5
   };
 }
 

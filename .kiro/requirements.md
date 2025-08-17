@@ -398,32 +398,36 @@ netlify dev
 - User authentication and saved prompts
 - Collaborative coding features
 
-## Recent Enhancements (Flying Bird Fix)
+## Recent Enhancements (Complete Projects Fix)
 
-### Enhanced Code Generation
-- **Fixed Preview Window**: Now generates complete, usable projects instead of placeholders
-- **Flying Bird Animation**: Added SVG-based animated flying bird with smooth wing flapping and flight path
-- **Enhanced Fallbacks**: Dynamic code generation for buttons, cards, games, animals, and flowers
-- **No More Placeholders**: All prompts now generate functional, interactive code
+### Fixed Preview Window for All Prompts
+- **Complete Projects**: All prompts (library and custom) now generate complete, self-contained HTML/CSS/JS
+- **Running Horse Animation**: Added SVG-based animated running horse with galloping legs and dust clouds
+- **Flying Bird Animation**: Enhanced SVG-based animated flying bird with smooth wing flapping and flight path
+- **No More Placeholders**: Removed all placeholder messages - every prompt generates functional, interactive code
+- **Enhanced Fallbacks**: Interactive canvas-based fallback with click-to-add shapes, animations, and color changes
 
 ### New Features Added
-- **Bird Artist Badge**: New achievement for creating flying bird animations
-- **SVG Animation Support**: Full support for `<animate>` and `<animateTransform>` elements
-- **Enhanced DOMPurify Config**: Allows SVG animation attributes for complete rendering
-- **Improved Custom Prompts**: Better integration with Hugging Face API for real-time generation
+- **Horse Animator Badge**: New achievement for creating running horse animations
+- **Interactive Fallback**: Default unknown prompts generate complete interactive canvas games
+- **Enhanced API Integration**: Better Hugging Face API integration for real-time code generation
+- **Complete HTML Downloads**: All animations work perfectly in downloaded HTML files
 
 ### Updated Prompt Library
-- Added "draw a flying bird" to Kid Mode prompts
-- Enhanced existing prompts with more interactive elements
+- Added "draw a running horse" to Kid Mode prompts
+- Enhanced all existing prompts with more interactive elements
 - Better visual feedback and animations for all generated code
+- Beginner-friendly setup guide with dependency checking
 
 ### Test Coverage
-- Added flying bird animation test
-- Enhanced SVG rendering tests
-- Improved code generation coverage
+- Added running horse animation test
+- Enhanced SVG rendering tests with multiple animation types
+- Improved code generation coverage for all prompt types
 
 ### Files Modified
-- `frontend/src/generatedCode.ts` - Enhanced with flying bird and better fallbacks
-- `frontend/src/App.tsx` - Updated DOMPurify config and badge system
-- `frontend/src/App.test.tsx` - Added flying bird test
+- `frontend/src/generatedCode.ts` - Added running horse, removed placeholders, enhanced fallbacks
+- `frontend/src/App.tsx` - Updated badge system, prompt library, and API integration
+- `frontend/src/App.test.tsx` - Added running horse test
+- `README.md` - Updated for beginner-friendliness and animation previews
+- `frontend/setup.ps1` - Enhanced dependency checking
 - `.kiro/requirements.md` - This documentation update

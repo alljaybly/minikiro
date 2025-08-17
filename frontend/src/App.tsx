@@ -39,7 +39,8 @@ function App() {
     { id: '4', name: 'Pro Developer', description: 'Switched to Pro Mode!', earned: false, icon: '💻' },
     { id: '5', name: 'Code Sharer', description: 'Shared your first code card!', earned: false, icon: '📤' },
     { id: '6', name: 'Prompt Creator', description: 'Created your first custom prompt!', earned: false, icon: '✨' },
-    { id: '7', name: 'Bird Artist', description: 'Created a flying bird animation!', earned: false, icon: '🐦' }
+    { id: '7', name: 'Bird Artist', description: 'Created a flying bird animation!', earned: false, icon: '🐦' },
+    { id: '8', name: 'Horse Animator', description: 'Created a running horse animation!', earned: false, icon: '🐎' }
   ]);
   const [easterEggActive, setEasterEggActive] = useState(false);
   const [customPrompts, setCustomPrompts] = useState<CustomPrompt[]>([]);
@@ -67,7 +68,7 @@ function App() {
       response = generateCode(correctedPrompt);
       
       // If it's a generic response and we have API access, try Hugging Face
-      if (response && response.code.includes('Custom Code Generated') && hfClient && process.env.REACT_APP_HF_TOKEN) {
+      if (response && response.code.includes('Interactive Creation') && hfClient && process.env.REACT_APP_HF_TOKEN) {
         try {
           const apiPrompt = `Generate complete, self-contained HTML/CSS/JS code (no external dependencies) for: ${correctedPrompt}
 
@@ -150,6 +151,9 @@ Code:`;
       } else if (normalizedPrompt.includes('bird') || normalizedPrompt.includes('flying')) {
         awardBadge('7');
         showLearningTip(isKidMode ? 'Animations make things come alive! 🐦' : 'SVG animations use SMIL for smooth motion!');
+      } else if (normalizedPrompt.includes('horse') || normalizedPrompt.includes('running')) {
+        awardBadge('8');
+        showLearningTip(isKidMode ? 'Horses can run so fast! 🐎' : 'Complex SVG animations with multiple moving parts!');
       }
       
       // Random easter egg trigger (5% chance)
@@ -446,7 +450,8 @@ Code:`;
     'draw a rainbow',
     'create a smiley face',
     'make a bouncing ball',
-    'draw a flying bird'
+    'draw a flying bird',
+    'draw a running horse'
   ];
 
   const proPrompts = [

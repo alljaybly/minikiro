@@ -430,6 +430,100 @@ export const realTimeCodeMap: Record<string, CodeResponse> = {
     language: "html",
     points: 80
   },
+  "draw a running horse": {
+    prompt: "draw a running horse",
+    code: `<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #8FBC8F, #F0E68C); min-height: 200px;">
+  <h3 style="color: #8B4513; margin-bottom: 20px; font-family: Arial, sans-serif;">🐎 Running Horse Animation</h3>
+  <svg width="350" height="180" viewBox="0 0 350 180" style="border: 2px solid #8B4513; border-radius: 10px; background: linear-gradient(to bottom, #87CEEB, #98FB98);">
+    <!-- Ground -->
+    <rect x="0" y="140" width="350" height="40" fill="#228B22"/>
+    <rect x="0" y="160" width="350" height="20" fill="#8B4513"/>
+    
+    <!-- Running Horse -->
+    <g id="horse">
+      <!-- Horse Body -->
+      <ellipse cx="180" cy="100" rx="40" ry="20" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+      
+      <!-- Horse Head -->
+      <ellipse cx="130" cy="85" rx="18" ry="25" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+      
+      <!-- Horse Mane -->
+      <path d="M 115 70 Q 120 60 125 70 Q 130 55 135 65 Q 140 50 145 60" stroke="#654321" stroke-width="3" fill="none"/>
+      
+      <!-- Horse Eye -->
+      <circle cx="125" cy="80" r="3" fill="black"/>
+      
+      <!-- Horse Nose -->
+      <ellipse cx="115" cy="90" rx="4" ry="6" fill="#654321"/>
+      
+      <!-- Horse Ears -->
+      <ellipse cx="135" cy="65" rx="4" ry="8" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+      <ellipse cx="140" cy="68" rx="4" ry="8" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+      
+      <!-- Horse Legs (animated) -->
+      <g id="legs">
+        <!-- Front legs -->
+        <rect x="155" y="115" width="6" height="25" fill="#8B4513">
+          <animateTransform attributeName="transform" type="rotate" 
+            values="0 158 115;15 158 115;0 158 115;-15 158 115;0 158 115" 
+            dur="0.6s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="165" y="115" width="6" height="25" fill="#8B4513">
+          <animateTransform attributeName="transform" type="rotate" 
+            values="0 168 115;-15 168 115;0 168 115;15 168 115;0 168 115" 
+            dur="0.6s" repeatCount="indefinite"/>
+        </rect>
+        
+        <!-- Back legs -->
+        <rect x="195" y="115" width="6" height="25" fill="#8B4513">
+          <animateTransform attributeName="transform" type="rotate" 
+            values="0 198 115;-15 198 115;0 198 115;15 198 115;0 198 115" 
+            dur="0.6s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="205" y="115" width="6" height="25" fill="#8B4513">
+          <animateTransform attributeName="transform" type="rotate" 
+            values="0 208 115;15 208 115;0 208 115;-15 208 115;0 208 115" 
+            dur="0.6s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+      
+      <!-- Horse Tail -->
+      <path d="M 220 95 Q 235 90 240 105 Q 235 120 225 115" fill="#654321" stroke="#4A4A4A" stroke-width="1">
+        <animateTransform attributeName="transform" type="rotate" 
+          values="0 220 95;10 220 95;-10 220 95;0 220 95" 
+          dur="1s" repeatCount="indefinite"/>
+      </path>
+      
+      <!-- Running Animation -->
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0;30,0;60,0;90,0;120,0;150,0;180,0" 
+        dur="4s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0;0,-3;0,0;0,-3;0,0" dur="0.6s" repeatCount="indefinite" additive="sum"/>
+    </g>
+    
+    <!-- Dust clouds -->
+    <g id="dust" opacity="0.6">
+      <ellipse cx="200" cy="135" rx="8" ry="4" fill="#D2B48C">
+        <animateTransform attributeName="transform" type="translate" 
+          values="0,0;30,0;60,0;90,0;120,0;150,0;180,0" 
+          dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="210" cy="138" rx="6" ry="3" fill="#D2B48C">
+        <animateTransform attributeName="transform" type="translate" 
+          values="0,0;30,0;60,0;90,0;120,0;150,0;180,0" 
+          dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+    </g>
+    
+    <!-- Sun -->
+    <circle cx="300" cy="30" r="20" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
+  </svg>
+  <p style="color: #8B4513; margin-top: 15px; font-family: Arial, sans-serif;">Watch the horse gallop across the field! 🏃‍♂️</p>
+</div>`,
+    language: "html",
+    points: 90
+  },
   "make a soccer ball game": {
     prompt: "make a soccer ball game",
     code: `<div style="text-align: center; padding: 20px; background: #228B22; color: white;">
@@ -802,31 +896,121 @@ export function generateCode(prompt: string): CodeResponse {
     };
   }
   
-  // Default response for unknown prompts - create something visual and interactive
+  // Default response for unknown prompts - create a complete interactive element
   return {
     prompt: correctedPrompt,
-    code: `<div style="padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white; text-align: center; max-width: 400px; margin: 20px auto; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
-  <h3 style="margin-bottom: 15px; color: #FFD700;">✨ Custom Creation</h3>
-  <p style="margin-bottom: 20px; font-size: 16px;">Generated for: "${correctedPrompt}"</p>
-  <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-    <div style="width: 60px; height: 60px; background: linear-gradient(45deg, #FFD700, #FFA500); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; animation: pulse 2s infinite;">
-      🎨
-    </div>
-    <p style="margin: 0; font-size: 14px; opacity: 0.9;">Your creative idea is taking shape!</p>
+    code: `<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white; max-width: 400px; margin: 20px auto; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+  <h3 style="margin-bottom: 20px; color: #FFD700;">🎨 Interactive Creation</h3>
+  <p style="margin-bottom: 20px; font-size: 16px;">Created for: "${correctedPrompt}"</p>
+  
+  <!-- Interactive Canvas -->
+  <canvas id="customCanvas" width="300" height="200" style="border: 2px solid #FFD700; border-radius: 8px; background: rgba(255,255,255,0.1); cursor: pointer;"></canvas>
+  
+  <div style="margin-top: 15px;">
+    <button onclick="startAnimation()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; transition: all 0.3s;" onmouseover="this.style.background='#218838'" onmouseout="this.style.background='#28a745'">
+      Start Animation
+    </button>
+    <button onclick="changeColors()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; transition: all 0.3s;" onmouseover="this.style.background='#138496'" onmouseout="this.style.background='#17a2b8'">
+      Change Colors
+    </button>
+    <button onclick="clearCanvas()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px; transition: all 0.3s;" onmouseover="this.style.background='#c82333'" onmouseout="this.style.background='#dc3545'">
+      Clear
+    </button>
   </div>
-  <button onclick="this.innerHTML='✨ Magic Happened! ✨'; this.style.background='#28a745';" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-    Click for Magic!
-  </button>
+  
+  <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">Click the canvas to add colorful shapes!</p>
+  
+  <script>
+    const canvas = document.getElementById('customCanvas');
+    const ctx = canvas.getContext('2d');
+    let animationRunning = false;
+    let animationId;
+    let shapes = [];
+    let colorIndex = 0;
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+    
+    function addShape(x, y) {
+      shapes.push({
+        x: x,
+        y: y,
+        size: Math.random() * 20 + 10,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        dx: (Math.random() - 0.5) * 2,
+        dy: (Math.random() - 0.5) * 2
+      });
+    }
+    
+    function drawShapes() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      shapes.forEach((shape, index) => {
+        ctx.beginPath();
+        ctx.arc(shape.x, shape.y, shape.size, 0, Math.PI * 2);
+        ctx.fillStyle = shape.color;
+        ctx.fill();
+        
+        if (animationRunning) {
+          shape.x += shape.dx;
+          shape.y += shape.dy;
+          
+          if (shape.x < 0 || shape.x > canvas.width) shape.dx = -shape.dx;
+          if (shape.y < 0 || shape.y > canvas.height) shape.dy = -shape.dy;
+        }
+      });
+      
+      if (animationRunning) {
+        animationId = requestAnimationFrame(drawShapes);
+      }
+    }
+    
+    function startAnimation() {
+      animationRunning = !animationRunning;
+      if (animationRunning) {
+        drawShapes();
+      } else {
+        cancelAnimationFrame(animationId);
+      }
+    }
+    
+    function changeColors() {
+      shapes.forEach(shape => {
+        shape.color = colors[Math.floor(Math.random() * colors.length)];
+      });
+      drawShapes();
+    }
+    
+    function clearCanvas() {
+      shapes = [];
+      animationRunning = false;
+      cancelAnimationFrame(animationId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      addShape(x, y);
+      drawShapes();
+    });
+    
+    // Add some initial shapes
+    addShape(150, 100);
+    addShape(100, 80);
+    addShape(200, 120);
+    drawShapes();
+  </script>
+  
   <style>
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
   </style>
 </div>`,
     language: "html",
-    points: 10
+    points: 50
   };
 }
 

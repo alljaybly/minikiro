@@ -463,4 +463,15 @@ describe('MiniKiro App', () => {
     expect(result.language).toBe('html');
     expect(result.points).toBe(80);
   });
+
+  test('Running horse prompt generates animated SVG', () => {
+    const result = generateCode('draw a running horse');
+    
+    expect(result).toBeDefined();
+    expect(result.code).toContain('<svg');
+    expect(result.code).toContain('animateTransform');
+    expect(result.code).toContain('Running Horse Animation');
+    expect(result.language).toBe('html');
+    expect(result.points).toBe(90);
+  });
 });

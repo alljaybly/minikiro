@@ -1,6 +1,6 @@
-# 🎨 MiniKiro - Learn Coding with Fun!
+# 🎨 MiniKiro - A Coding Tool for Total Beginners
 
-MiniKiro is a simplified Kiro-like coding app that makes programming fun and accessible for everyone! Whether you're 6 or 60, MiniKiro helps you create amazing code with natural language prompts.
+MiniKiro is a coding tool designed for total beginners (ages 6-16) and pros (17+) with real-time animated previews. Create amazing interactive projects just by typing what you want - no coding knowledge required!
 
 ## ✨ What Makes MiniKiro Special?
 
@@ -28,74 +28,50 @@ Before you begin, make sure you have these installed:
 3. **VS Code** (recommended) - Download from [code.visualstudio.com](https://code.visualstudio.com/)
 4. **Hugging Face API Token** (optional) - Get from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
 
-### 📥 Installation Steps
+### 📥 Setup
 
-#### Option 1: Automatic Setup (Recommended for Beginners)
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/alljaybly/minikiro.git
-   cd minikiro
-   ```
+#### Prerequisites
+- Install [Node.js (v20 LTS)](https://nodejs.org)
+- Install [Git](https://git-scm.com)
+- Install [VS Code](https://code.visualstudio.com) (recommended)
+- Get a [Hugging Face API token](https://huggingface.co/settings/tokens) (optional)
 
-2. **Run the setup script:**
-   ```powershell
-   .\frontend\setup.ps1
-   ```
-   This will automatically install everything and start the app!
+#### Quick Setup
+1. **Clone:** `git clone https://github.com/alljaybly/minikiro.git`
+2. **Navigate:** `cd minikiro/frontend`
+3. **Install:** `npm install`
+4. **Configure Tailwind:** `npx tailwindcss init -p`
+5. **Add Hugging Face token:** Create `.env` with `REACT_APP_HF_TOKEN=your_token`
+6. **Run:** `npm start`
 
-3. **Configure AI Features (Optional):**
-   - The setup script creates a `.env` file
-   - Replace `your_huggingface_token_here` with your actual token
-   - This enables real-time AI code generation
+#### Automatic Setup (Recommended for Beginners)
+```powershell
+.\frontend\setup.ps1
+```
+This will automatically install everything and start the app!
 
-#### Option 2: Manual Setup
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/alljaybly/minikiro.git
-   cd minikiro/frontend
-   ```
+## 🎯 Using MiniKiro
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### Kid Mode (Ages 6-16):
+- **Type "Draw a running horse"** to see an animated horse galloping across the screen
+- **Type "Draw a flying bird"** to watch a bird fly across the sky with flapping wings
+- **Type "Make a bouncing ball"** for a colorful bouncing animation
+- **Type "Draw a rainbow"** to create a beautiful multi-colored rainbow
 
-3. **Configure Tailwind CSS:**
-   ```bash
-   npx tailwindcss init -p
-   ```
+### Pro Mode (Ages 17+):
+- **Type "Make a soccer ball game"** for an interactive bouncing soccer ball
+- **Type "Move in the direction you swipe"** for a touch-controlled game
+- **Type "Create a glowing navbar"** for a professional navigation bar
+- **Type "Build a REST API client"** for an interactive API testing tool
 
-4. **Add Hugging Face token (Optional):**
-   Create `.env` file with:
-   ```
-   REACT_APP_HF_TOKEN=your_token_here
-   ```
+### Custom Prompts:
+- Add your own ideas (e.g., "Draw a green circle", "Make a dancing cat")
+- See real-time animations and games in the preview window
+- All code works offline - download complete HTML files to share
 
-5. **Start the development server:**
-   ```bash
-   npm start
-   ```
-
-6. **Open your browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## 🎯 Try These Fun Prompts!
-
-### Kid Mode Examples:
-- `"draw a red star"` → Creates a beautiful SVG star
-- `"make a cartoon button"` → Builds a colorful animated button
-- `"draw a rainbow"` → Generates a multi-colored rainbow
-- `"create a smiley face"` → Makes a happy SVG face
-- `"make a bouncing ball"` → Creates a CSS animation
-- `"make a pixel art game"` → Interactive pixel game with controls
-
-### Pro Mode Examples:
-- `"create a glowing navbar"` → Builds a professional navigation bar
-- `"build a rest api client"` → Creates an interactive API testing tool
-- `"create a data dashboard"` → Generates a metrics dashboard
-- `"make a soccer ball game"` → Animated bouncing soccer ball
-- `"move in the direction you swipe"` → Interactive touch/swipe game
-- `"neon card"` → Creates a cyberpunk-styled card component
+### Accessibility:
+- Use keyboard navigation and screen readers for ease of use
+- All features designed for total beginners with zero coding knowledge
 
 ### 🌐 Using Downloaded HTML Files:
 1. **Generate Code**: Type any prompt and click "Generate Code"

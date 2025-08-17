@@ -8,8 +8,7 @@ Write-Host ""
 # Check if Node.js is installed
 Write-Host "🔍 Checking Node.js installation..." -ForegroundColor Yellow
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host "❌ Node.js not found!" -ForegroundColor Red
-    Write-Host "Please download and install Node.js v20 LTS from: https://nodejs.org" -ForegroundColor Yellow
+    Write-Host "❌ Node.js not found. Download from https://nodejs.org (LTS)." -ForegroundColor Red
     Write-Host "After installation, restart PowerShell and run this script again." -ForegroundColor Yellow
     Read-Host "Press Enter to exit"
     exit 1
@@ -17,6 +16,15 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 
 $nodeVersion = node -v
 Write-Host "✅ Node.js found: $nodeVersion" -ForegroundColor Green
+
+# Check if Git is installed
+Write-Host "🔍 Checking Git installation..." -ForegroundColor Yellow
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    Write-Host "⚠️  Git not found. Download from https://git-scm.com for version control." -ForegroundColor Yellow
+} else {
+    $gitVersion = git --version
+    Write-Host "✅ Git found: $gitVersion" -ForegroundColor Green
+}
 
 # Check if we're in the right directory
 if (-not (Test-Path "package.json")) {
@@ -163,8 +171,8 @@ Write-Host "🚀 Starting MiniKiro..." -ForegroundColor Cyan
 Write-Host "Your app will open at: http://localhost:3000" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Try these fun prompts:" -ForegroundColor Magenta
-Write-Host "  Kid Mode: 'draw a red star', 'make a cartoon button'" -ForegroundColor White
-Write-Host "  Pro Mode: 'create a glowing navbar', 'build a rest api client'" -ForegroundColor White
+Write-Host "  Kid Mode: 'draw a running horse', 'draw a flying bird'" -ForegroundColor White
+Write-Host "  Pro Mode: 'make a soccer ball game', 'move in the direction you swipe'" -ForegroundColor White
 Write-Host ""
 Write-Host "Press Ctrl+C to stop the server when you're done coding!" -ForegroundColor Gray
 Write-Host ""

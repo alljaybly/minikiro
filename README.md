@@ -97,10 +97,23 @@ Before you begin, make sure you have these installed:
 - `"move in the direction you swipe"` → Interactive touch/swipe game
 - `"neon card"` → Creates a cyberpunk-styled card component
 
+### 🌐 Using Downloaded HTML Files:
+1. **Generate Code**: Type any prompt and click "Generate Code"
+2. **Download**: Click "Download HTML" to save the complete file
+3. **Open Offline**: Double-click the `.html` file to open in your browser
+4. **Share**: Send the file to friends - it works without internet!
+5. **Games Work**: Interactive games (soccer ball, swipe) work perfectly offline
+
 ### 🎮 Interactive Games:
 - **Swipe Game**: Try "move in the direction you swipe" for a touch-controlled game
 - **Soccer Ball**: "make a soccer ball game" creates a bouncing ball animation
 - **Pixel Art**: "make a pixel art game" builds a retro-style game with controls
+
+### 📤 Share & Download:
+- **HTML Download**: Click "Download HTML" to save complete, self-contained HTML files
+- **Offline Ready**: Downloaded files work offline in any browser (Chrome, Firefox, Safari)
+- **Complete Code**: Includes all CSS and JavaScript inline - no external dependencies
+- **Kid-Friendly**: Simple one-click download for sharing creations with friends
 
 ## 🏆 Features Overview
 

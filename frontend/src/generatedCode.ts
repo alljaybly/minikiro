@@ -369,6 +369,67 @@ export const realTimeCodeMap: Record<string, CodeResponse> = {
     language: "html",
     points: 100
   },
+  "draw a flying bird": {
+    prompt: "draw a flying bird",
+    code: `<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #87CEEB, #98FB98); min-height: 200px;">
+  <h3 style="color: #2F4F4F; margin-bottom: 20px; font-family: Arial, sans-serif;">🐦 Flying Bird Animation</h3>
+  <svg width="300" height="150" viewBox="0 0 300 150" style="border: 2px solid #4682B4; border-radius: 10px; background: linear-gradient(to bottom, #87CEEB, #E0F6FF);">
+    <!-- Clouds -->
+    <ellipse cx="50" cy="30" rx="15" ry="8" fill="white" opacity="0.8"/>
+    <ellipse cx="60" cy="25" rx="20" ry="10" fill="white" opacity="0.8"/>
+    <ellipse cx="250" cy="40" rx="18" ry="9" fill="white" opacity="0.8"/>
+    
+    <!-- Flying Bird -->
+    <g id="bird">
+      <!-- Bird Body -->
+      <ellipse cx="150" cy="75" rx="25" ry="15" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+      
+      <!-- Bird Head -->
+      <circle cx="125" cy="70" r="12" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+      
+      <!-- Bird Eye -->
+      <circle cx="120" cy="67" r="3" fill="white"/>
+      <circle cx="119" cy="66" r="1.5" fill="black"/>
+      
+      <!-- Bird Beak -->
+      <polygon points="108,70 115,68 115,72" fill="#FFA500"/>
+      
+      <!-- Bird Wings (animated) -->
+      <g id="wings">
+        <ellipse cx="140" cy="65" rx="20" ry="8" fill="#654321" stroke="#4A4A4A" stroke-width="1">
+          <animateTransform attributeName="transform" type="rotate" 
+            values="0 140 65;-20 140 65;0 140 65;20 140 65;0 140 65" 
+            dur="0.5s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="160" cy="70" rx="18" ry="6" fill="#654321" stroke="#4A4A4A" stroke-width="1">
+          <animateTransform attributeName="transform" type="rotate" 
+            values="0 160 70;15 160 70;0 160 70;-15 160 70;0 160 70" 
+            dur="0.5s" repeatCount="indefinite"/>
+        </ellipse>
+      </g>
+      
+      <!-- Bird Tail -->
+      <ellipse cx="175" cy="80" rx="15" ry="5" fill="#654321" stroke="#4A4A4A" stroke-width="1"/>
+      
+      <!-- Flying Animation -->
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0;50,-10;100,-5;150,0;200,5;250,-10;300,0" 
+        dur="8s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,5;0,-5;0,5" dur="1s" repeatCount="indefinite" additive="sum"/>
+    </g>
+    
+    <!-- Ground -->
+    <rect x="0" y="130" width="300" height="20" fill="#228B22"/>
+    
+    <!-- Sun -->
+    <circle cx="270" cy="30" r="15" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
+  </svg>
+  <p style="color: #2F4F4F; margin-top: 15px; font-family: Arial, sans-serif;">Watch the bird fly across the sky! 🌤️</p>
+</div>`,
+    language: "html",
+    points: 80
+  },
   "make a soccer ball game": {
     prompt: "make a soccer ball game",
     code: `<div style="text-align: center; padding: 20px; background: #228B22; color: white;">
@@ -581,9 +642,12 @@ export function generateCode(prompt: string): CodeResponse {
   if (correctedPrompt.includes('button')) {
     return {
       prompt: correctedPrompt,
-      code: `<button style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border: none; padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-  ${prompt}
-</button>`,
+      code: `<div style="text-align: center; padding: 20px;">
+  <button style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border: none; padding: 12px 24px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="this.innerHTML='Clicked! 🎉'">
+    ${correctedPrompt.charAt(0).toUpperCase() + correctedPrompt.slice(1)}
+  </button>
+  <p style="margin-top: 15px; color: #666;">Click the button to see the magic! ✨</p>
+</div>`,
       language: "html",
       points: 15
     };
@@ -592,10 +656,13 @@ export function generateCode(prompt: string): CodeResponse {
   if (correctedPrompt.includes('card')) {
     return {
       prompt: correctedPrompt,
-      code: `<div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); max-width: 300px; margin: 20px;">
-  <h3 style="color: #333; margin-bottom: 15px;">Card Title</h3>
-  <p style="color: #666; line-height: 1.6;">This is a beautiful card component generated for: "${prompt}"</p>
-  <button style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 15px;">Action</button>
+      code: `<div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); max-width: 300px; margin: 20px auto; border: 1px solid #e0e0e0;">
+  <div style="width: 100%; height: 120px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center;">
+    <span style="color: white; font-size: 24px;">🎨</span>
+  </div>
+  <h3 style="color: #333; margin-bottom: 15px; font-family: Arial, sans-serif;">Beautiful Card</h3>
+  <p style="color: #666; line-height: 1.6; font-size: 14px;">This is a beautiful card component with a gradient header and clean design, generated for: "${correctedPrompt}"</p>
+  <button style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 15px; transition: background 0.2s;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Learn More</button>
 </div>`,
       language: "html",
       points: 25
@@ -605,32 +672,70 @@ export function generateCode(prompt: string): CodeResponse {
   if (correctedPrompt.includes('game') || correctedPrompt.includes('interactive')) {
     return {
       prompt: correctedPrompt,
-      code: `<div style="text-align: center; padding: 20px; background: #2c3e50; color: white; border-radius: 12px;">
-  <h3 style="margin-bottom: 20px;">🎮 Interactive Game</h3>
-  <canvas id="gameCanvas" width="300" height="200" style="border: 2px solid #3498db; background: #34495e;"></canvas>
+      code: `<div style="text-align: center; padding: 20px; background: #2c3e50; color: white; border-radius: 12px; max-width: 400px; margin: 20px auto;">
+  <h3 style="margin-bottom: 20px; color: #3498db;">🎮 Interactive Game</h3>
+  <canvas id="gameCanvas" width="300" height="200" style="border: 2px solid #3498db; background: #34495e; border-radius: 8px;"></canvas>
   <div style="margin-top: 15px;">
-    <button onclick="startGame()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px;">Start Game</button>
+    <button onclick="startGame()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; transition: background 0.2s;" onmouseover="this.style.background='#2980b9'" onmouseout="this.style.background='#3498db'">Start Game</button>
+    <button onclick="resetGame()" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; transition: background 0.2s;" onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">Reset</button>
   </div>
+  <p style="margin-top: 10px; font-size: 12px; color: #bdc3c7;">Click Start to begin the colorful animation!</p>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     let gameRunning = false;
+    let animationId;
+    let particles = [];
+    
+    function createParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        dx: (Math.random() - 0.5) * 4,
+        dy: (Math.random() - 0.5) * 4,
+        color: \`hsl(\${Math.random() * 360}, 70%, 60%)\`,
+        size: Math.random() * 10 + 5
+      };
+    }
     
     function startGame() {
       gameRunning = !gameRunning;
       if (gameRunning) {
+        for (let i = 0; i < 10; i++) {
+          particles.push(createParticle());
+        }
         drawGame();
+      } else {
+        cancelAnimationFrame(animationId);
       }
+    }
+    
+    function resetGame() {
+      gameRunning = false;
+      cancelAnimationFrame(animationId);
+      particles = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
     
     function drawGame() {
       if (!gameRunning) return;
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#e74c3c';
-      ctx.fillRect(Math.random() * 280, Math.random() * 180, 20, 20);
       
-      setTimeout(drawGame, 100);
+      particles.forEach((particle, index) => {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = particle.color;
+        ctx.fill();
+        
+        particle.x += particle.dx;
+        particle.y += particle.dy;
+        
+        if (particle.x < 0 || particle.x > canvas.width) particle.dx = -particle.dx;
+        if (particle.y < 0 || particle.y > canvas.height) particle.dy = -particle.dy;
+      });
+      
+      animationId = requestAnimationFrame(drawGame);
     }
   </script>
 </div>`,
@@ -639,19 +744,89 @@ export function generateCode(prompt: string): CodeResponse {
     };
   }
   
-  // Default response for unknown prompts
+  if (correctedPrompt.includes('animal') || correctedPrompt.includes('cat') || correctedPrompt.includes('dog')) {
+    return {
+      prompt: correctedPrompt,
+      code: `<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #FFE5B4, #FFCCCB); border-radius: 15px; max-width: 300px; margin: 20px auto;">
+  <h3 style="color: #8B4513; margin-bottom: 20px;">🐾 Cute Animal</h3>
+  <svg width="150" height="150" viewBox="0 0 150 150">
+    <!-- Animal face -->
+    <circle cx="75" cy="75" r="60" fill="#DEB887" stroke="#8B4513" stroke-width="2"/>
+    <!-- Eyes -->
+    <circle cx="60" cy="60" r="8" fill="white"/>
+    <circle cx="90" cy="60" r="8" fill="white"/>
+    <circle cx="60" cy="60" r="4" fill="black"/>
+    <circle cx="90" cy="60" r="4" fill="black"/>
+    <!-- Nose -->
+    <ellipse cx="75" cy="80" rx="6" ry="4" fill="#FF69B4"/>
+    <!-- Mouth -->
+    <path d="M 65 95 Q 75 105 85 95" stroke="#8B4513" stroke-width="2" fill="none"/>
+    <!-- Ears -->
+    <ellipse cx="50" cy="35" rx="15" ry="25" fill="#DEB887" stroke="#8B4513" stroke-width="2"/>
+    <ellipse cx="100" cy="35" rx="15" ry="25" fill="#DEB887" stroke="#8B4513" stroke-width="2"/>
+  </svg>
+  <p style="color: #8B4513; margin-top: 15px; font-family: Arial, sans-serif;">A friendly animal says hello! 👋</p>
+</div>`,
+      language: "html",
+      points: 30
+    };
+  }
+  
+  if (correctedPrompt.includes('flower') || correctedPrompt.includes('plant')) {
+    return {
+      prompt: correctedPrompt,
+      code: `<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #98FB98, #90EE90); border-radius: 15px; max-width: 300px; margin: 20px auto;">
+  <h3 style="color: #228B22; margin-bottom: 20px;">🌸 Beautiful Flower</h3>
+  <svg width="150" height="180" viewBox="0 0 150 180">
+    <!-- Stem -->
+    <rect x="72" y="100" width="6" height="70" fill="#228B22"/>
+    <!-- Leaves -->
+    <ellipse cx="60" cy="120" rx="15" ry="8" fill="#32CD32" transform="rotate(-30 60 120)"/>
+    <ellipse cx="90" cy="140" rx="15" ry="8" fill="#32CD32" transform="rotate(30 90 140)"/>
+    <!-- Flower petals -->
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF69B4" transform="rotate(0 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF1493" transform="rotate(45 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF69B4" transform="rotate(90 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF1493" transform="rotate(135 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF69B4" transform="rotate(180 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF1493" transform="rotate(225 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF69B4" transform="rotate(270 75 60)"/>
+    <ellipse cx="75" cy="60" rx="20" ry="35" fill="#FF1493" transform="rotate(315 75 60)"/>
+    <!-- Flower center -->
+    <circle cx="75" cy="60" r="12" fill="#FFD700"/>
+  </svg>
+  <p style="color: #228B22; margin-top: 15px; font-family: Arial, sans-serif;">A blooming flower in the garden! 🌱</p>
+</div>`,
+      language: "html",
+      points: 35
+    };
+  }
+  
+  // Default response for unknown prompts - create something visual and interactive
   return {
     prompt: correctedPrompt,
-    code: `<div style="padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white; text-align: center; max-width: 400px; margin: 20px auto;">
-  <h3 style="margin-bottom: 15px;">✨ Custom Code Generated</h3>
-  <p style="margin-bottom: 15px;">Generated for: "${prompt}"</p>
-  <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; font-family: monospace;">
-    // Your custom implementation here
-    console.log("${prompt}");
+    code: `<div style="padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white; text-align: center; max-width: 400px; margin: 20px auto; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+  <h3 style="margin-bottom: 15px; color: #FFD700;">✨ Custom Creation</h3>
+  <p style="margin-bottom: 20px; font-size: 16px;">Generated for: "${correctedPrompt}"</p>
+  <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+    <div style="width: 60px; height: 60px; background: linear-gradient(45deg, #FFD700, #FFA500); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; animation: pulse 2s infinite;">
+      🎨
+    </div>
+    <p style="margin: 0; font-size: 14px; opacity: 0.9;">Your creative idea is taking shape!</p>
   </div>
+  <button onclick="this.innerHTML='✨ Magic Happened! ✨'; this.style.background='#28a745';" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+    Click for Magic!
+  </button>
+  <style>
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
 </div>`,
     language: "html",
-    points: 5
+    points: 10
   };
 }
 

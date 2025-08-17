@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import html2canvas from 'html2canvas';
 import { HfInference } from '@huggingface/inference';
 import { generateCode, formatCode, CodeResponse } from './generatedCode';
 
@@ -39,7 +38,8 @@ function App() {
     { id: '3', name: 'Rainbow Artist', description: 'Drew a beautiful rainbow!', earned: false, icon: '🌈' },
     { id: '4', name: 'Pro Developer', description: 'Switched to Pro Mode!', earned: false, icon: '💻' },
     { id: '5', name: 'Code Sharer', description: 'Shared your first code card!', earned: false, icon: '📤' },
-    { id: '6', name: 'Prompt Creator', description: 'Created your first custom prompt!', earned: false, icon: '✨' }
+    { id: '6', name: 'Prompt Creator', description: 'Created your first custom prompt!', earned: false, icon: '✨' },
+    { id: '7', name: 'Bird Artist', description: 'Created a flying bird animation!', earned: false, icon: '🐦' }
   ]);
   const [easterEggActive, setEasterEggActive] = useState(false);
   const [customPrompts, setCustomPrompts] = useState<CustomPrompt[]>([]);
@@ -61,34 +61,75 @@ function App() {
     
     try {
       let response: CodeResponse;
+      const correctedPrompt = correctTypos(prompt);
       
-      // Try Hugging Face API first if token is available
-      if (hfClient && process.env.REACT_APP_HF_TOKEN) {
+      // Try local generation first
+      response = generateCode(correctedPrompt);
+      
+      // If it's a generic response and we have API access, try Hugging Face
+      if (response && response.code.includes('Custom Code Generated') && hfClient && process.env.REACT_APP_HF_TOKEN) {
         try {
+          const apiPrompt = `Generate complete, self-contained HTML/CSS/JS code (no external dependencies) for: ${correctedPrompt}
+
+Requirements:
+- Include all CSS inline in <style> tags
+- Include all JavaScript inline in <script> tags
+- Make it interactive and functional
+- Use canvas for games if needed
+- Ensure it works offline in any browser
+
+Code:`;
+
           const result = await hfClient.textGeneration({
             model: 'bigcode/starcoder',
-            inputs: `Generate clean, functional ${newPromptLanguage.toUpperCase()} code for: ${prompt}\n\nCode:`,
+            inputs: apiPrompt,
             parameters: {
-              max_new_tokens: 500,
-              temperature: 0.7,
-              return_full_text: false
+              max_new_tokens: 800,
+              temperature: 0.3,
+              return_full_text: false,
+              stop: ['</html>', '```']
             }
           });
           
-          const generatedText = result.generated_text || '';
+          let generatedText = result.generated_text || '';
+          
+          // Clean up the generated code
+          generatedText = generatedText
+            .replace(/```[\s\S]*?```/g, '') // Remove markdown code blocks
+            .replace(/^[\s\S]*?(<[^>]+>)/m, '$1') // Start from first HTML tag
+            .trim();
+          
+          // If it doesn't look like HTML, wrap it
+          if (!generatedText.includes('<') || !generatedText.includes('>')) {
+            generatedText = `<div style="padding: 20px; font-family: Arial, sans-serif;">
+  <h3>Generated Code</h3>
+  <pre style="background: #f5f5f5; padding: 10px; border-radius: 5px;">${generatedText}</pre>
+</div>`;
+          }
+          
           response = {
-            prompt: prompt,
-            code: generatedText.trim(),
+            prompt: correctedPrompt,
+            code: generatedText,
             language: detectLanguage(generatedText) || 'html',
-            points: calculatePoints(prompt)
+            points: calculatePoints(correctedPrompt)
           };
+          
+          // Store custom prompt in localStorage
+          const updatedCustomPrompts = [...customPrompts, {
+            id: Date.now().toString(),
+            title: correctedPrompt,
+            description: correctedPrompt,
+            language: response.language,
+            createdAt: new Date().toISOString(),
+            isKidMode: isKidMode
+          }];
+          setCustomPrompts(updatedCustomPrompts);
+          localStorage.setItem('minikiro_custom_prompts', JSON.stringify(updatedCustomPrompts));
+          
         } catch (apiErr) {
-          console.warn('Hugging Face API failed, falling back to local generation:', apiErr);
-          response = generateCode(prompt);
+          console.warn('Hugging Face API failed, using local fallback:', apiErr);
+          // Keep the local response
         }
-      } else {
-        // Fallback to local generation
-        response = generateCode(prompt);
       }
       
       setGeneratedCode(response);
@@ -96,7 +137,7 @@ function App() {
       setShowPreview(true);
       
       // Award badges based on prompt
-      const normalizedPrompt = prompt.toLowerCase();
+      const normalizedPrompt = correctedPrompt.toLowerCase();
       if (normalizedPrompt.includes('star')) {
         awardBadge('1');
         showLearningTip(isKidMode ? 'SVG draws shapes! ⭐' : 'SVG is great for scalable graphics!');
@@ -106,6 +147,9 @@ function App() {
       } else if (normalizedPrompt.includes('rainbow')) {
         awardBadge('3');
         showLearningTip(isKidMode ? 'Colors make everything pretty! 🌈' : 'SVG paths create smooth curves!');
+      } else if (normalizedPrompt.includes('bird') || normalizedPrompt.includes('flying')) {
+        awardBadge('7');
+        showLearningTip(isKidMode ? 'Animations make things come alive! 🐦' : 'SVG animations use SMIL for smooth motion!');
       }
       
       // Random easter egg trigger (5% chance)
@@ -118,6 +162,32 @@ function App() {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Add typo correction function
+  const correctTypos = (text: string): string => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/\bim\b/g, 'in')
+      .replace(/\bdirecion\b/g, 'direction')
+      .replace(/\bdireciton\b/g, 'direction')
+      .replace(/\bswype\b/g, 'swipe')
+      .replace(/\bmove\s+im\s+the\s+direcion/g, 'move in the direction')
+      .replace(/\bmove\s+in\s+the\s+direcion/g, 'move in the direction')
+      .replace(/\bcreat\b/g, 'create')
+      .replace(/\bmak\b/g, 'make')
+      .replace(/\bbuton\b/g, 'button')
+      .replace(/\bnavbr\b/g, 'navbar')
+      .replace(/\bnavigaton\b/g, 'navigation')
+      .replace(/\banimaton\b/g, 'animation')
+      .replace(/\binteractiv\b/g, 'interactive')
+      .replace(/\bgam\b/g, 'game')
+      .replace(/\bsoccer\s+bal\b/g, 'soccer ball')
+      .replace(/\bfootbal\b/g, 'football')
+      .replace(/\bcanvs\b/g, 'canvas')
+      .replace(/\bpixl\b/g, 'pixel')
+      .replace(/\bart\b/g, 'art');
   };
 
   const detectLanguage = (code: string): string => {
@@ -199,18 +269,104 @@ function App() {
     if (!generatedCode) return;
     
     try {
-      const element = document.getElementById('preview-output');
-      if (element) {
-        const canvas = await html2canvas(element);
-        const link = document.createElement('a');
-        link.download = `minikiro-code-${Date.now()}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
-        awardBadge('5'); // Code Sharer badge
-        showLearningTip('Code card saved! 📤');
-      }
+      // Create complete HTML file with embedded CSS and JS
+      const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniKiro Generated Code - ${generatedCode.prompt}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    body {
+      font-family: 'Press Start 2P', cursive;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+      color: #48bb78;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(72, 187, 120, 0.3);
+      max-width: 800px;
+      width: 100%;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ed64a6;
+      font-size: 12px;
+    }
+    
+    .content {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      color: #333;
+      font-family: Arial, sans-serif;
+    }
+    
+    canvas {
+      border: 2px solid #ed64a6;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(237, 100, 166, 0.5);
+    }
+    
+    button {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 MiniKiro Generated Code</h1>
+      <p>Prompt: "${generatedCode.prompt}"</p>
+      <p>Generated on: ${new Date().toLocaleDateString()}</p>
+    </div>
+    <div class="content">
+      ${DOMPurify.sanitize(generatedCode.code, {
+        ADD_TAGS: ['script', 'canvas', 'button', 'div', 'span', 'p', 'h1', 'h2', 'h3', 'svg', 'polygon', 'circle', 'path', 'text', 'nav', 'ul', 'li', 'a', 'style', 'ellipse', 'rect', 'g', 'animate', 'animateTransform'],
+        ADD_ATTR: ['id', 'style', 'width', 'height', 'onclick', 'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'onmousemove', 'ontouchstart', 'ontouchmove', 'ontouchend', 'class', 'viewBox', 'points', 'fill', 'stroke', 'stroke-width', 'cx', 'cy', 'r', 'd', 'x', 'y', 'text-anchor', 'font-family', 'font-size', 'href', 'touch-action', 'rx', 'ry', 'opacity', 'attributeName', 'attributeType', 'type', 'from', 'to', 'dur', 'repeatCount', 'values', 'additive', 'transform'],
+        ALLOW_DATA_ATTR: false,
+        ALLOW_UNKNOWN_PROTOCOLS: false
+      })}
+    </div>
+    <div class="header" style="margin-top: 20px; font-size: 8px;">
+      <p>Created with MiniKiro - Learn coding with fun!</p>
+      <p>Visit: https://github.com/alljaybly/minikiro</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+      // Create and download the HTML file
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `minikiro-${generatedCode.prompt.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      awardBadge('5'); // Code Sharer badge
+      showLearningTip(isKidMode ? 'HTML file saved! Open it in your browser! 🌐' : 'Complete HTML file downloaded! 📤');
     } catch (error) {
-      console.error('Error generating code card:', error);
+      console.error('Error generating HTML file:', error);
+      setApiError('Failed to create HTML file. Please try again.');
     }
   };
 
@@ -273,8 +429,8 @@ function App() {
   useEffect(() => {
     if (generatedCode && (generatedCode.language === 'html' || generatedCode.language === 'javascript')) {
       const sanitized = DOMPurify.sanitize(generatedCode.code, {
-        ADD_TAGS: ['button', 'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'svg', 'polygon', 'circle', 'path', 'text', 'nav', 'ul', 'li', 'a', 'style', 'input', 'textarea', 'select', 'option', 'label', 'canvas', 'script'],
-        ADD_ATTR: ['style', 'class', 'onclick', 'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'onmousemove', 'ontouchstart', 'ontouchmove', 'ontouchend', 'width', 'height', 'viewBox', 'points', 'fill', 'stroke', 'stroke-width', 'cx', 'cy', 'r', 'd', 'x', 'y', 'text-anchor', 'font-family', 'font-size', 'href', 'type', 'placeholder', 'id', 'touch-action'],
+        ADD_TAGS: ['button', 'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'svg', 'polygon', 'circle', 'path', 'text', 'nav', 'ul', 'li', 'a', 'style', 'input', 'textarea', 'select', 'option', 'label', 'canvas', 'script', 'ellipse', 'rect', 'g', 'animate', 'animateTransform'],
+        ADD_ATTR: ['style', 'class', 'onclick', 'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup', 'onmousemove', 'ontouchstart', 'ontouchmove', 'ontouchend', 'width', 'height', 'viewBox', 'points', 'fill', 'stroke', 'stroke-width', 'cx', 'cy', 'r', 'd', 'x', 'y', 'text-anchor', 'font-family', 'font-size', 'href', 'type', 'placeholder', 'id', 'touch-action', 'rx', 'ry', 'opacity', 'attributeName', 'attributeType', 'type', 'from', 'to', 'dur', 'repeatCount', 'values', 'additive', 'transform'],
         ALLOW_DATA_ATTR: false,
         ALLOW_UNKNOWN_PROTOCOLS: false
       });
@@ -289,7 +445,8 @@ function App() {
     'make a cartoon button', 
     'draw a rainbow',
     'create a smiley face',
-    'make a bouncing ball'
+    'make a bouncing ball',
+    'draw a flying bird'
   ];
 
   const proPrompts = [
@@ -678,9 +835,9 @@ function App() {
                       ? 'bg-gradient-to-r from-pink-400 to-red-500 text-white' 
                       : 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
                   }`}
-                  aria-label="Share code as image"
+                  aria-label="Download complete HTML file"
                 >
-                  {isKidMode ? '📸 Share Card' : '📤 Share Code'}
+                  {isKidMode ? '🌐 Save HTML' : '📤 Download HTML'}
                 </button>
                 {!isKidMode && (
                   <button
